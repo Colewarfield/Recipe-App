@@ -1,0 +1,104 @@
+﻿import Link from 'next/link'
+
+export default function HelpPage() {
+  return (
+    <div className="min-h-screen p-4">
+      <div className="max-w-2xl mx-auto">
+        <div className="mb-4">
+          <Link href="/" className="text-sm text-gray-600 underline">Back</Link>
+        </div>
+
+        <h1 className="text-3xl font-bold mb-2">Help &amp; How-To</h1>
+        <p className="text-gray-500 text-sm mb-8">Everything you can do in the Recipe App.</p>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Getting started</h2>
+          <p className="text-gray-800">Sign in with your Google account. On iPhone, open in Safari, tap the Share button, then choose &quot;Add to Home Screen&quot; so it acts like a real app.</p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Browsing recipes</h2>
+          <p className="text-gray-800">The home page shows every recipe you can see. Three ways to browse:</p>
+          <ul className="list-disc pl-5 mt-2 space-y-1 text-gray-800">
+            <li><b>By Category</b>: recipes grouped by Breakfast, Lunch, Dinner, Dessert, Snacks, Drinks.</li>
+            <li><b>All A-Z</b>: flat list sorted alphabetically by title.</li>
+            <li><b>Recent</b>: newest first, with labels like &quot;Today&quot;, &quot;2 days ago&quot;.</li>
+          </ul>
+          <p className="mt-2 text-gray-800">The <b>search bar</b> filters by recipe name in any view. The <b>🎲 dice button</b> picks a random recipe (respects your search filter if one is active).</p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Adding a recipe manually</h2>
+          <ol className="list-decimal pl-5 space-y-1 text-gray-800">
+            <li>Tap <b>+ Add Recipe</b>.</li>
+            <li>Fill in title, category, ingredients (one per line), steps (one per line), and optional notes.</li>
+            <li>Uncheck <b>Make this public</b> if you want the recipe kept private (only you can see it).</li>
+            <li>Tap <b>Save Recipe</b>.</li>
+          </ol>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Scanning a recipe with AI</h2>
+          <ol className="list-decimal pl-5 space-y-1 text-gray-800">
+            <li>Tap <b>Scan Recipe</b>.</li>
+            <li>Upload one or more images of the recipe (screenshots, photos of a cookbook, etc.). Multiple images from the same recipe get combined.</li>
+            <li>Tap <b>Extract Recipe with AI</b> and wait 10-20 seconds.</li>
+            <li>Review the pre-filled form. Fix anything the AI got wrong.</li>
+            <li>Tap <b>Save Recipe</b>.</li>
+          </ol>
+          <p className="mt-2 text-gray-800 text-sm">Tip: clearer images give better results. Cropped screenshots work great. If a recipe spans multiple screens, upload all screenshots at once.</p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Sectioned ingredient lists</h2>
+          <p className="text-gray-800">For recipes with multiple components (e.g., meatballs + sauce + toppings), split ingredients into sections by typing a line like this:</p>
+          <pre className="bg-gray-100 rounded p-3 mt-2 text-sm overflow-x-auto">## Meatballs
+1 lb ground beef
+1 egg
+
+## Tzatziki
+1 cup Greek yogurt
+1 cucumber, grated</pre>
+          <p className="mt-2 text-gray-800">Rules: two pound signs, space, then the section name, on its own line. Every ingredient below becomes part of that section until the next <code>##</code>. Works when typing manually AND when scanning (the AI preserves sections it finds in the image).</p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Editing a recipe</h2>
+          <p className="text-gray-800">Open one of your own recipes, scroll to the bottom, tap <b>Edit this recipe</b>. Change anything and tap <b>Save Changes</b>. Tap <b>Cancel</b> to bail without saving.</p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Deleting a recipe</h2>
+          <p className="text-gray-800">Open one of your own recipes, scroll to the bottom, tap <b>Delete this recipe</b> (in red). Confirm the popup. The recipe is permanently gone.</p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Editing your name</h2>
+          <p className="text-gray-800">Tap <b>Profile</b> at the top of the home page. Change your display name and save. This is the name shown as the author on all your recipes.</p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Who can see what?</h2>
+          <ul className="list-disc pl-5 space-y-1 text-gray-800">
+            <li><b>Public recipes</b>: anyone signed in can see them.</li>
+            <li><b>Private recipes</b>: only you can see them.</li>
+            <li><b>Editing/deleting</b>: only the person who added a recipe can change or remove it. Everyone else&apos;s recipes are read-only to you.</li>
+          </ul>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Sharing the app with someone</h2>
+          <p className="text-gray-800">Send them the app URL. They&apos;ll need a Google account, and that account must be added as a test user by the app owner before they can sign in.</p>
+          <p className="mt-2 text-gray-800 text-sm">First-time sign-in shows an &quot;unverified app&quot; warning from Google. Tap <b>Advanced</b>, then <b>Go to Recipe App (unsafe)</b>. This is normal for personal apps.</p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Signing out</h2>
+          <p className="text-gray-800">Tap <b>Sign out</b> at the top of the home page. You&apos;ll stay signed out until you sign in again.</p>
+        </section>
+
+        <p className="text-xs text-gray-400 mt-12">Last updated after the sectioned ingredients feature.</p>
+      </div>
+    </div>
+  )
+}

@@ -38,6 +38,7 @@ export default async function HomePage() {
         <header className="flex justify-between items-center mb-2">
           <h1 className="text-3xl font-bold">Recipe App</h1>
           <div className="flex gap-3 text-sm items-center">
+            <Link href="/help" className="text-gray-600 underline">Help</Link>
             <Link href="/profile" className="text-gray-600 underline">Profile</Link>
             <form action={signOut}>
               <button className="text-gray-600 underline">Sign out</button>
@@ -60,6 +61,7 @@ export default async function HomePage() {
     </div>
   )
 }
+
 
 
 
