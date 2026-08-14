@@ -3,6 +3,32 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import DeleteRecipeButton from '@/components/DeleteRecipeButton'
 
+type Section = { title: string; items: string[] }
+
+function parseSections(items: string[]): Section[] {
+  const sections: Section[] = []
+  let current: Section = { title: '', items: [] }
+
+  for (const raw of items) {
+    const line = String(raw).trim()
+    if (!line) continue
+    if (line.startsWith('##')) {
+      if (current.items.length > 0 || current.title) {
+        sections.push(current)
+      }
+      current = { title: line.replace(/^#+\s*/, '').trim(), items: [] }
+    } else {
+      current.items.push(line)
+    }
+  }
+
+  if (current.items.length > 0 || current.title) {
+    sections.push(current)
+  }
+
+  return sections
+}
+
 export default async function RecipePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
@@ -18,6 +44,7 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
   if (!recipe) notFound()
 
   const isOwner = user?.id === recipe.owner_id
+  const ingredientSections = parseSections(recipe.ingredients || [])
 
   return (
     <div className="min-h-screen p-4">
@@ -33,9 +60,14 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
 
         <section className="mb-6">
           <h2 className="text-xl font-semibold mb-2">Ingredients</h2>
-          <ul className="list-disc pl-5 space-y-1">
-            {recipe.ingredients.map((ing: string, i: number) => (<li key={i}>{ing}</li>))}
-          </ul>
+          {ingredientSections.map((sec, i) => (
+            <div key={i} className={i > 0 ? 'mt-4' : ''}>
+              {sec.title && <h3 className="font-semibold text-gray-800 mb-1">{sec.title}</h3>}
+              <ul className="list-disc pl-5 space-y-1">
+                {sec.items.map((ing, j) => (<li key={j}>{ing}</li>))}
+              </ul>
+            </div>
+          ))}
         </section>
 
         <section className="mb-6">
@@ -64,4 +96,3 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
     </div>
   )
 }
-

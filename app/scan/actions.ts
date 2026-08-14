@@ -51,6 +51,8 @@ Rules:
 - Combine information across ALL images (they show parts of the same recipe)
 - Guess the category from context (pancakes -> Breakfast, cookies -> Dessert)
 - Each ingredient is one array item with its amount (e.g., "2 cups flour")
+- If the recipe has MULTIPLE distinct ingredient groups (e.g., "For the meatballs", "For the sauce", "For the topping"), preserve them as sections. Format: put a line "## Group Name" as its own array item before that group's ingredients. Example: ["## Meatballs", "1 lb ground beef", "1 egg", "## Tzatziki", "1 cup yogurt", "1 cucumber grated"]
+- If the recipe has only ONE ingredient list, do NOT add any "##" headers - keep it flat
 - Each step is one array item, in order
 - Notes: any cook tips, servings, prep time, storage; empty string if none`
 
@@ -105,3 +107,4 @@ Rules:
     throw new Error('Could not parse recipe from images. Try clearer or different photos.')
   }
 }
+

@@ -166,7 +166,7 @@ export default function ScanPage() {
 
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  Ingredients <span className="text-gray-500 font-normal">(one per line)</span>
+                  Ingredients <span className="text-gray-500 font-normal">(one per line - use ## Name for section headers)</span>
                 </label>
                 <textarea
                   name="ingredients"
@@ -228,3 +228,4 @@ export default function ScanPage() {
     </div>
   )
 }
+

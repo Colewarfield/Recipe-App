@@ -32,7 +32,7 @@ export default async function NewRecipePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Ingredients <span className="text-gray-500 font-normal">(one per line)</span></label>
+            <label className="block text-sm font-medium mb-1">Ingredients <span className="text-gray-500 font-normal">(one per line - use ## Name for section headers)</span></label>
             <textarea name="ingredients" required rows={6} className="w-full px-3 py-2 border rounded font-mono text-sm" placeholder={"2 chicken breasts\n1/2 cup hot sauce\n4 brioche buns"} />
           </div>
 
@@ -57,3 +57,4 @@ export default async function NewRecipePage() {
     </div>
   )
 }
+
