@@ -53,7 +53,10 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
         )}
 
         {isOwner && (
-          <div className="mt-8 pt-6 border-t">
+          <div className="mt-8 pt-6 border-t flex items-center gap-4">
+            <Link href={'/recipe/' + recipe.id + '/edit'} className="text-blue-600 text-sm underline">
+              Edit this recipe
+            </Link>
             <DeleteRecipeButton recipeId={recipe.id} />
           </div>
         )}
@@ -61,3 +64,4 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
     </div>
   )
 }
+

@@ -80,3 +80,40 @@ export async function deleteRecipe(id: string): Promise<void> {
 
   revalidatePath('/')
 }
+
+
+export async function updateRecipe(id: string, formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const title = formData.get('title') as string
+  const category = formData.get('category') as string
+  const ingredientsRaw = formData.get('ingredients') as string
+  const stepsRaw = formData.get('steps') as string
+  const notes = (formData.get('notes') as string) ?? ''
+  const isPublic = formData.get('is_public') === 'on'
+
+  const ingredients = ingredientsRaw.split('\n').map(s => s.trim()).filter(Boolean)
+  const steps = stepsRaw.split('\n').map(s => s.trim()).filter(Boolean)
+
+  const { error } = await supabase
+    .from('recipes')
+    .update({
+      title,
+      category,
+      ingredients,
+      steps,
+      notes,
+      is_public: isPublic,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .eq('owner_id', user.id)
+
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/')
+  revalidatePath('/recipe/' + id)
+  redirect('/recipe/' + id)
+}
