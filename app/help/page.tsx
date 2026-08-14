@@ -63,6 +63,11 @@ export default function HelpPage() {
         </section>
 
         <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Exporting a grocery list</h2>
+          <p className="text-gray-800">Open any recipe and tap <b>Export list</b> next to the Ingredients heading. On iPhone this opens the Share sheet so you can send the ingredients straight to the Notes app, Messages, Mail, or anywhere else. On desktop it copies the list to your clipboard.</p>
+        </section>
+
+        <section className="mb-8">
           <h2 className="text-xl font-semibold mb-2">Editing a recipe</h2>
           <p className="text-gray-800">Open one of your own recipes, scroll to the bottom, tap <b>Edit this recipe</b>. Change anything and tap <b>Save Changes</b>. Tap <b>Cancel</b> to bail without saving.</p>
         </section>
@@ -97,8 +102,9 @@ export default function HelpPage() {
           <p className="text-gray-800">Tap <b>Sign out</b> at the top of the home page. You&apos;ll stay signed out until you sign in again.</p>
         </section>
 
-        <p className="text-xs text-gray-400 mt-12">Last updated after the sectioned ingredients feature.</p>
+        <p className="text-xs text-gray-400 mt-12">Last updated after adding the grocery list export and section dividers.</p>
       </div>
     </div>
   )
 }
+

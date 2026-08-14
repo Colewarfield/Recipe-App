@@ -2,30 +2,24 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import DeleteRecipeButton from '@/components/DeleteRecipeButton'
+import ExportGroceryButton from '@/components/ExportGroceryButton'
 
 type Section = { title: string; items: string[] }
 
 function parseSections(items: string[]): Section[] {
   const sections: Section[] = []
   let current: Section = { title: '', items: [] }
-
   for (const raw of items) {
     const line = String(raw).trim()
     if (!line) continue
     if (line.startsWith('##')) {
-      if (current.items.length > 0 || current.title) {
-        sections.push(current)
-      }
+      if (current.items.length > 0 || current.title) sections.push(current)
       current = { title: line.replace(/^#+\s*/, '').trim(), items: [] }
     } else {
       current.items.push(line)
     }
   }
-
-  if (current.items.length > 0 || current.title) {
-    sections.push(current)
-  }
-
+  if (current.items.length > 0 || current.title) sections.push(current)
   return sections
 }
 
@@ -59,7 +53,10 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
         </div>
 
         <section className="mb-6">
-          <h2 className="text-xl font-semibold mb-2">Ingredients</h2>
+          <div className="flex justify-between items-baseline mb-2 gap-2">
+            <h2 className="text-xl font-semibold">Ingredients</h2>
+            <ExportGroceryButton ingredients={recipe.ingredients || []} recipeTitle={recipe.title} />
+          </div>
           {ingredientSections.map((sec, i) => (
             <div key={i} className={i > 0 ? 'mt-4' : ''}>
               {sec.title && <h3 className="font-semibold text-gray-800 mb-1">{sec.title}</h3>}
@@ -70,7 +67,7 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
           ))}
         </section>
 
-        <section className="mb-6">
+        <section className="mb-6 pt-6 border-t border-gray-200">
           <h2 className="text-xl font-semibold mb-2">Steps</h2>
           <ol className="list-decimal pl-5 space-y-2">
             {recipe.steps.map((step: string, i: number) => (<li key={i}>{step}</li>))}
@@ -78,14 +75,14 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
         </section>
 
         {recipe.notes && (
-          <section className="mb-6">
+          <section className="mb-6 pt-6 border-t border-gray-200">
             <h2 className="text-xl font-semibold mb-2">Notes</h2>
             <p className="whitespace-pre-wrap text-gray-700">{recipe.notes}</p>
           </section>
         )}
 
         {isOwner && (
-          <div className="mt-8 pt-6 border-t flex items-center gap-4">
+          <div className="mt-8 pt-6 border-t border-gray-200 flex items-center gap-4">
             <Link href={'/recipe/' + recipe.id + '/edit'} className="text-blue-600 text-sm underline">
               Edit this recipe
             </Link>
