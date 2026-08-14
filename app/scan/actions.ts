@@ -1,6 +1,6 @@
 ﻿'use server'
 
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 import { createClient } from '@/lib/supabase/server'
 
 export type ScannedRecipe = {
@@ -34,38 +34,62 @@ export async function scanRecipe(formData: FormData): Promise<ScannedRecipe> {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) throw new Error('Server not configured: GEMINI_API_KEY missing')
 
-  const genAI = new GoogleGenerativeAI(apiKey)
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-2.5-flash',
-    generationConfig: { responseMimeType: 'application/json' },
-  })
+  const client = new GoogleGenAI({ apiKey })
 
-  const prompt = `You are a recipe extraction assistant. The image(s) below contain a single recipe (possibly split across multiple screenshots or photos).
+  const prompt = `You are a recipe extraction assistant. The image(s) contain a single recipe, possibly split across multiple screenshots or photos.
 
-Extract the recipe and return ONLY valid JSON matching this exact schema:
+Extract the recipe and return JSON matching exactly this schema:
 {
   "title": string,
   "category": one of "Breakfast", "Lunch", "Dinner", "Dessert", "Snacks", "Drinks",
-  "ingredients": string[],
-  "steps": string[],
+  "ingredients": array of strings,
+  "steps": array of strings,
   "notes": string
 }
 
 Rules:
-- Combine information across ALL images (they show different parts of the same recipe)
-- Guess the category from context (pancakes -> Breakfast, cookies -> Dessert, salad -> Lunch, etc.)
-- Each ingredient is one array item, including amounts (e.g., "2 cups all-purpose flour")
-- Each step is one array item, in order, concise but complete
-- Notes: any cook tips, servings, prep time, storage; empty string if none
-- No markdown, no code fences, only the JSON object`
+- Combine information across ALL images (they show parts of the same recipe)
+- Guess the category from context (pancakes -> Breakfast, cookies -> Dessert)
+- Each ingredient is one array item with its amount (e.g., "2 cups flour")
+- Each step is one array item, in order
+- Notes: any cook tips, servings, prep time, storage; empty string if none`
 
-  const parts = [
-    { text: prompt },
-    ...images.map(img => ({ inlineData: { data: img.data, mimeType: img.mimeType } })),
-  ]
+  const input: unknown[] = images.map(img => ({
+    type: 'image',
+    mime_type: img.mimeType,
+    data: img.data,
+  }))
+  input.push({ type: 'text', text: prompt })
 
-  const result = await model.generateContent(parts)
-  const text = result.response.text()
+  const schema = {
+    type: 'object',
+    properties: {
+      title: { type: 'string' },
+      category: { type: 'string' },
+      ingredients: { type: 'array', items: { type: 'string' } },
+      steps: { type: 'array', items: { type: 'string' } },
+      notes: { type: 'string' },
+    },
+    required: ['title', 'category', 'ingredients', 'steps'],
+  }
+
+  const clientAny = client as unknown as {
+    interactions: {
+      create: (args: unknown) => Promise<{ output_text?: string; outputText?: string }>
+    }
+  }
+
+  const interaction = await clientAny.interactions.create({
+    model: 'gemini-3.6-flash',
+    input,
+    response_format: [{
+      type: 'text',
+      mime_type: 'application/json',
+      schema,
+    }],
+  })
+
+  const text = interaction.output_text ?? interaction.outputText ?? ''
 
   try {
     const parsed = JSON.parse(text)
@@ -81,4 +105,3 @@ Rules:
     throw new Error('Could not parse recipe from images. Try clearer or different photos.')
   }
 }
-
