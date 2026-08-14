@@ -40,13 +40,19 @@ export default async function HomePage() {
         </header>
         <p className="text-gray-500 text-sm mb-6">Signed in as {user.email}</p>
 
-        <Link href="/new" className="block mb-6 px-4 py-3 bg-black text-white rounded-lg text-center">
-          + Add Recipe
-        </Link>
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <Link href="/new" className="block px-4 py-3 bg-black text-white rounded-lg text-center text-sm font-medium">
+            + Add Recipe
+          </Link>
+          <Link href="/scan" className="block px-4 py-3 bg-orange-500 text-white rounded-lg text-center text-sm font-medium">
+            Scan Recipe
+          </Link>
+        </div>
 
         <RecipeBrowser recipes={(recipes as any) ?? []} />
       </div>
     </div>
   )
 }
+
 
