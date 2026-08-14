@@ -1,18 +1,23 @@
 ﻿import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import DeleteRecipeButton from '@/components/DeleteRecipeButton'
 
 export default async function RecipePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
 
-  const { data: recipe } = await supabase
-    .from('recipes')
-    .select('*, profiles(display_name)')
-    .eq('id', id)
-    .single()
+  const [recipeResult, userResult] = await Promise.all([
+    supabase.from('recipes').select('*, profiles(display_name)').eq('id', id).single(),
+    supabase.auth.getUser(),
+  ])
+
+  const recipe = recipeResult.data
+  const user = userResult.data.user
 
   if (!recipe) notFound()
+
+  const isOwner = user?.id === recipe.owner_id
 
   return (
     <div className="min-h-screen p-4">
@@ -45,6 +50,12 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
             <h2 className="text-xl font-semibold mb-2">Notes</h2>
             <p className="whitespace-pre-wrap text-gray-700">{recipe.notes}</p>
           </section>
+        )}
+
+        {isOwner && (
+          <div className="mt-8 pt-6 border-t">
+            <DeleteRecipeButton recipeId={recipe.id} />
+          </div>
         )}
       </div>
     </div>

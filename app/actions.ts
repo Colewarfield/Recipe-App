@@ -63,3 +63,20 @@ export async function updateProfile(formData: FormData) {
   revalidatePath('/')
   redirect('/profile')
 }
+
+
+export async function deleteRecipe(id: string): Promise<void> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not signed in')
+
+  const { error } = await supabase
+    .from('recipes')
+    .delete()
+    .eq('id', id)
+    .eq('owner_id', user.id)
+
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/')
+}
