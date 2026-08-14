@@ -21,9 +21,15 @@ export default async function HomePage() {
     )
   }
 
+  const { data: myProfile } = await supabase
+    .from('profiles')
+    .select('display_name')
+    .eq('id', user.id)
+    .single()
+
   const { data: recipes } = await supabase
     .from('recipes')
-    .select('id, title, category, profiles(display_name)')
+    .select('id, title, category, created_at, profiles(display_name)')
     .order('created_at', { ascending: false })
 
   return (
@@ -38,7 +44,7 @@ export default async function HomePage() {
             </form>
           </div>
         </header>
-        <p className="text-gray-500 text-sm mb-6">Signed in as {user.email}</p>
+        <p className="text-gray-500 text-sm mb-6">Signed in as {myProfile?.display_name || user.email}</p>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
           <Link href="/new" className="block px-4 py-3 bg-black text-white rounded-lg text-center text-sm font-medium">
@@ -54,5 +60,6 @@ export default async function HomePage() {
     </div>
   )
 }
+
 
 
