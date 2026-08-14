@@ -44,8 +44,9 @@ export default async function HomePage() {
           + Add Recipe
         </Link>
 
-        <RecipeBrowser recipes={recipes ?? []} />
+        <RecipeBrowser recipes={(recipes as any) ?? []} />
       </div>
     </div>
   )
 }
+
