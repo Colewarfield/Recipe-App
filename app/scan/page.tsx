@@ -210,7 +210,7 @@ export default function ScanPage() {
                 Make this public
               </label>
 
-              <button type="submit" className="w-full px-4 py-3 bg-black text-white rounded-lg">
+              <button type="submit" className="w-full px-4 py-3 bg-orange-600 text-white rounded-lg">
                 Save Recipe
               </button>
 
@@ -228,4 +228,5 @@ export default function ScanPage() {
     </div>
   )
 }
+
 

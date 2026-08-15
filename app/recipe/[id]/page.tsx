@@ -48,9 +48,16 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
         </div>
 
         <h1 className="text-3xl font-bold mb-2">{recipe.title}</h1>
-        <div className="text-sm text-gray-500 mb-6">
+        <div className="text-sm text-gray-500 mb-4">
           {recipe.category} - by {(recipe.profiles as any)?.display_name || 'unknown'}
         </div>
+
+        <Link
+          href={'/recipe/' + recipe.id + '/cook'}
+          className="block mb-6 py-3 bg-orange-600 text-white text-center rounded-lg font-medium"
+        >
+          Start cooking
+        </Link>
 
         <section className="mb-6">
           <div className="flex justify-between items-baseline mb-2 gap-2">
@@ -93,3 +100,4 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
     </div>
   )
 }
+

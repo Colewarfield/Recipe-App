@@ -63,6 +63,18 @@ export default function HelpPage() {
         </section>
 
         <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Cooking mode</h2>
+          <p className="text-gray-800">Open any recipe and tap <b>Start cooking</b> to enter cooking mode:</p>
+          <ul className="list-disc pl-5 mt-2 space-y-1 text-gray-800">
+            <li>Big, easy-to-read text for wet or floury hands.</li>
+            <li>Tap ingredients to check them off as you use them (state stays until you leave the page).</li>
+            <li>Screen stays awake automatically so it doesn&apos;t sleep on you mid-recipe.</li>
+            <li>Tap <b>Exit cooking mode</b> at top or bottom to return to the normal recipe view.</li>
+          </ul>
+          <p className="mt-2 text-gray-800 text-sm">Note: screen wake requires iOS 16.4 or newer. If unsupported, cooking mode still works, the screen just doesn&apos;t stay on automatically.</p>
+        </section>
+
+        <section className="mb-8">
           <h2 className="text-xl font-semibold mb-2">Exporting a grocery list</h2>
           <p className="text-gray-800">Open any recipe and tap <b>Export list</b> next to the Ingredients heading. On iPhone this opens the Share sheet so you can send the ingredients straight to the Notes app, Messages, Mail, or anywhere else. On desktop it copies the list to your clipboard.</p>
         </section>
@@ -102,9 +114,10 @@ export default function HelpPage() {
           <p className="text-gray-800">Tap <b>Sign out</b> at the top of the home page. You&apos;ll stay signed out until you sign in again.</p>
         </section>
 
-        <p className="text-xs text-gray-400 mt-12">Last updated after adding the grocery list export and section dividers.</p>
+        <p className="text-xs text-gray-400 mt-12">Last updated after cooking mode and the warm color theme.</p>
       </div>
     </div>
   )
 }
+
 

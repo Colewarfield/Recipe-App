@@ -38,7 +38,7 @@ export default async function ProfilePage() {
             </p>
           </div>
 
-          <button type="submit" className="w-full px-4 py-3 bg-black text-white rounded-lg">
+          <button type="submit" className="w-full px-4 py-3 bg-orange-600 text-white rounded-lg">
             Save Changes
           </button>
         </form>
@@ -52,3 +52,4 @@ export default async function ProfilePage() {
     </div>
   )
 }
+

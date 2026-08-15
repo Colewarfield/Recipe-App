@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Personal recipe collection',
     start_url: '/',
     display: 'standalone',
-    background_color: '#ffffff',
-    theme_color: '#f97316',
+    background_color: '#fef7ed',
+    theme_color: '#c2410c',
     icons: [
       { src: '/icon', sizes: '512x512', type: 'image/png' },
       { src: '/apple-icon', sizes: '180x180', type: 'image/png' },

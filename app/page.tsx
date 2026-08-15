@@ -13,7 +13,7 @@ export default async function HomePage() {
         <div className="text-center">
           <h1 className="text-3xl font-bold mb-4">Recipe App</h1>
           <p className="mb-6 text-gray-600">Sign in to start adding recipes</p>
-          <Link href="/login" className="inline-block px-6 py-3 bg-black text-white rounded-lg">
+          <Link href="/login" className="inline-block px-6 py-3 bg-orange-600 text-white rounded-lg">
             Sign In
           </Link>
         </div>
@@ -48,7 +48,7 @@ export default async function HomePage() {
         <p className="text-gray-500 text-sm mb-6">Signed in as {myProfile?.display_name || user.email}</p>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <Link href="/new" className="block px-4 py-3 bg-black text-white rounded-lg text-center text-sm font-medium">
+          <Link href="/new" className="block px-4 py-3 bg-orange-600 text-white rounded-lg text-center text-sm font-medium">
             + Add Recipe
           </Link>
           <Link href="/scan" className="block px-4 py-3 bg-orange-500 text-white rounded-lg text-center text-sm font-medium">
@@ -61,6 +61,7 @@ export default async function HomePage() {
     </div>
   )
 }
+
 
 
 
