@@ -2,6 +2,7 @@
 import { redirect } from 'next/navigation'
 import { updateProfile } from '../actions'
 import Link from 'next/link'
+import ThemeSchemeSelector from '@/components/ThemeSchemeSelector'
 
 export default async function ProfilePage() {
   const supabase = await createClient()
@@ -43,6 +44,10 @@ export default async function ProfilePage() {
           </button>
         </form>
 
+        <div className="mt-10">
+          <ThemeSchemeSelector />
+        </div>
+
         <div className="mt-8 pt-6 border-t">
           <p className="text-sm text-gray-500">
             Email: {user.email}
@@ -52,5 +57,6 @@ export default async function ProfilePage() {
     </div>
   )
 }
+
 
 

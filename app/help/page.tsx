@@ -74,6 +74,16 @@ export default function HelpPage() {
         </section>
 
         <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Themes</h2>
+          <p className="text-gray-800 dark:text-stone-200">Go to Profile (or /appearance) to pick from three color themes:</p>
+          <ul className="list-disc pl-5 mt-2 space-y-1 text-gray-800 dark:text-stone-200">
+            <li><b>Ocean</b> — cool blue on cream (default)</li>
+            <li><b>Warm Cream</b> — terracotta on cream, calming</li>
+            <li><b>Deep</b> — Spotify-inspired green on charcoal</li>
+          </ul>
+        </section>
+
+        <section className="mb-8">
           <h2 className="text-xl font-semibold mb-2">Light &amp; dark mode</h2>
           <p className="text-gray-800 dark:text-stone-200">Tap the sun/moon icon in the top-right of the home page to switch between light and dark mode. Your choice is remembered on this device (each device is independent).</p>
         </section>
@@ -118,11 +128,12 @@ export default function HelpPage() {
           <p className="text-gray-800">Tap <b>Sign out</b> at the top of the home page. You&apos;ll stay signed out until you sign in again.</p>
         </section>
 
-        <p className="text-xs text-gray-400 mt-12">Last updated after the blue theme and dark mode toggle.</p>
+        <p className="text-xs text-gray-400 mt-12">Last updated after adding the three-theme picker (Ocean, Warm Cream, Deep).</p>
       </div>
     </div>
   )
 }
+
 
 
 

@@ -2,12 +2,117 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Default theme: Ocean (blue) */
+:root {
+  --tp: #2563eb;
+  --tp-hover: #1d4ed8;
+  --tp-light: #dbeafe;
+  --tp-light-fg: #1e40af;
+  --tp-dark-fg: #60a5fa;
+  --tp-marker: #3b82f6;
+  --tp-border-light: #bfdbfe;
+  --tp-border: #93c5fd;
+  --tp-focus: #60a5fa;
+  --body-bg: #eff6ff;
+  --body-bg-dark: #0f172a;
+  --surface: #ffffff;
+  --surface-dark: #1e293b;
+  --border-dark: #334155;
+  --pill-dark-bg: rgba(30, 64, 175, 0.4);
+}
+
+[data-theme="terracotta"] {
+  --tp: #c2410c;
+  --tp-hover: #9a3412;
+  --tp-light: #ffedd5;
+  --tp-light-fg: #9a3412;
+  --tp-dark-fg: #fdba74;
+  --tp-marker: #ea580c;
+  --tp-border-light: #fed7aa;
+  --tp-border: #fdba74;
+  --tp-focus: #f97316;
+  --body-bg: #fef7f0;
+  --body-bg-dark: #1a1310;
+  --surface: #ffffff;
+  --surface-dark: #29201a;
+  --border-dark: #57534e;
+  --pill-dark-bg: rgba(154, 52, 18, 0.35);
+}
+
+[data-theme="spotify"] {
+  --tp: #1db954;
+  --tp-hover: #169c46;
+  --tp-light: #dcfce7;
+  --tp-light-fg: #15803d;
+  --tp-dark-fg: #4ade80;
+  --tp-marker: #22c55e;
+  --tp-border-light: #bbf7d0;
+  --tp-border: #86efac;
+  --tp-focus: #22c55e;
+  --body-bg: #f5f5f5;
+  --body-bg-dark: #121212;
+  --surface: #ffffff;
+  --surface-dark: #181818;
+  --border-dark: #282828;
+  --pill-dark-bg: rgba(29, 185, 84, 0.18);
+}
+
+body {
+  background-color: var(--body-bg);
+}
+
+.dark body {
+  background-color: var(--body-bg-dark);
+}
+
+/* Remap blue-* utility classes to theme variables */
+.bg-blue-600 { background-color: var(--tp) !important; }
+.bg-blue-100 { background-color: var(--tp-light) !important; }
+.bg-blue-50 { background-color: var(--body-bg) !important; }
+.text-blue-700 { color: var(--tp-light-fg) !important; }
+.text-blue-600 { color: var(--tp) !important; }
+.text-blue-500 { color: var(--tp-marker) !important; }
+.text-blue-400 { color: var(--tp-dark-fg) !important; }
+.text-blue-300 { color: var(--tp-dark-fg) !important; }
+.border-blue-100 { border-color: var(--tp-border-light) !important; }
+.border-blue-200 { border-color: var(--tp-border) !important; }
+.border-blue-300 { border-color: var(--tp-border) !important; }
+.border-blue-400 { border-color: var(--tp-focus) !important; }
+.border-blue-600 { border-color: var(--tp) !important; }
+.marker\:text-blue-500::marker { color: var(--tp-marker) !important; }
+
+/* Translucent bg overrides (drop alpha, use solid) */
+.bg-blue-50\/90 { background-color: var(--body-bg) !important; }
+.bg-blue-50\/70 { background-color: var(--body-bg) !important; }
+.bg-white\/60 { background-color: var(--surface) !important; }
+
+/* Active states */
+.active\:bg-blue-700:active { background-color: var(--tp-hover) !important; }
+.active\:bg-blue-100:active { background-color: var(--tp-light) !important; }
+.active\:bg-blue-50\/70:active { background-color: var(--tp-light) !important; }
+.active\:bg-blue-50:active { background-color: var(--tp-light) !important; }
+
+.focus\:border-blue-400:focus { border-color: var(--tp-focus) !important; }
+
+/* Dark mode overrides */
+.dark .dark\:bg-slate-800 { background-color: var(--surface-dark) !important; }
+.dark .dark\:bg-slate-900 { background-color: var(--body-bg-dark) !important; }
+.dark .dark\:bg-slate-900\/90 { background-color: var(--body-bg-dark) !important; }
+.dark .dark\:bg-slate-800\/60 { background-color: var(--surface-dark) !important; }
+.dark .dark\:border-slate-700 { border-color: var(--border-dark) !important; }
+.dark .dark\:active\:bg-slate-700:active { background-color: var(--surface-dark) !important; }
+.dark .dark\:active\:bg-blue-50:active { background-color: var(--surface-dark) !important; }
+.dark .dark\:text-blue-300 { color: var(--tp-dark-fg) !important; }
+.dark .dark\:text-blue-400 { color: var(--tp-dark-fg) !important; }
+.dark .dark\:bg-blue-900\/40 { background-color: var(--pill-dark-bg) !important; }
+
+/* Input defaults for dark mode */
 .dark input:not([type="checkbox"]):not([type="radio"]),
 .dark textarea,
 .dark select {
-  background-color: rgb(30 41 59);
+  background-color: var(--surface-dark);
   color: rgb(245 245 244);
-  border-color: rgb(51 65 85);
+  border-color: var(--border-dark);
 }
 
 .dark input::placeholder,

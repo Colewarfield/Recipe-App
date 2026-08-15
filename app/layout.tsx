@@ -25,7 +25,7 @@ export const viewport: Viewport = {
   userScalable: false,
 }
 
-const themeInitScript = "(function(){try{var s=localStorage.getItem('theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var dark=s==='dark'||(s===null&&d);if(dark)document.documentElement.classList.add('dark');}catch(e){}})();"
+const themeInitScript = "(function(){try{var m=localStorage.getItem('theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var dark=m==='dark'||(m===null&&d);if(dark)document.documentElement.classList.add('dark');var sc=localStorage.getItem('theme-scheme')||'blue';document.documentElement.setAttribute('data-theme',sc);}catch(e){}})();"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="antialiased bg-blue-50 dark:bg-slate-900 text-stone-900 dark:text-stone-100 min-h-screen transition-colors">{children}</body>
+      <body className="antialiased text-stone-900 dark:text-stone-100 min-h-screen transition-colors">{children}</body>
     </html>
   )
 }
