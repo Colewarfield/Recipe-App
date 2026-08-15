@@ -19,21 +19,42 @@ type View = 'category' | 'all' | 'recent'
 function timeAgo(dateStr: string): string {
   const then = new Date(dateStr).getTime()
   const now = Date.now()
-  const diffMs = now - then
-  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  const days = Math.floor((now - then) / (1000 * 60 * 60 * 24))
   if (days === 0) return 'Today'
   if (days === 1) return 'Yesterday'
-  if (days < 7) return days + ' days ago'
+  if (days < 7) return days + 'd ago'
   if (days < 30) {
-    const weeks = Math.floor(days / 7)
-    return weeks === 1 ? '1 week ago' : weeks + ' weeks ago'
+    const w = Math.floor(days / 7)
+    return w + 'w ago'
   }
   if (days < 365) {
-    const months = Math.floor(days / 30)
-    return months === 1 ? '1 month ago' : months + ' months ago'
+    const m = Math.floor(days / 30)
+    return m + 'mo ago'
   }
-  const years = Math.floor(days / 365)
-  return years === 1 ? '1 year ago' : years + ' years ago'
+  const y = Math.floor(days / 365)
+  return y + 'y ago'
+}
+
+function RecipeCard({ recipe, showTimestamp = false }: { recipe: Recipe; showTimestamp?: boolean }) {
+  return (
+    <Link
+      href={'/recipe/' + recipe.id}
+      className="block bg-white rounded-2xl px-4 py-3.5 border border-orange-100 active:bg-orange-50/70 transition-colors"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-stone-900 text-base leading-snug">{recipe.title}</div>
+          <div className="text-xs text-stone-500 mt-1">
+            {recipe.category} · {recipe.profiles?.display_name || 'unknown'}
+            {showTimestamp && ' · ' + timeAgo(recipe.created_at)}
+          </div>
+        </div>
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="text-stone-400 flex-shrink-0">
+          <path d="M7 5l6 5-6 5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+    </Link>
+  )
 }
 
 export default function RecipeBrowser({ recipes }: { recipes: Recipe[] }) {
@@ -61,83 +82,64 @@ export default function RecipeBrowser({ recipes }: { recipes: Recipe[] }) {
   return (
     <div>
       <div className="flex gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="Search recipes..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 px-4 py-2 border rounded-lg"
-        />
+        <div className="relative flex-1">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none">
+            <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.75" />
+            <path d="m13.5 13.5 3 3" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search recipes"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-orange-100 rounded-full text-sm focus:outline-none focus:border-orange-400"
+          />
+        </div>
         <button
           type="button"
           onClick={handleRandom}
           disabled={recipes.length === 0}
-          className="px-3 py-2 border rounded-lg text-lg hover:bg-gray-50 disabled:opacity-50"
-          title="Pick a random recipe"
+          className="w-11 h-11 flex items-center justify-center bg-white border border-orange-100 rounded-full text-lg active:bg-orange-100 disabled:opacity-40"
+          title="Random recipe"
         >
           🎲
         </button>
       </div>
 
-      <div className="flex gap-1 mb-6 border-b">
-        <button
-          onClick={() => setView('category')}
-          className={"px-3 py-2 text-sm " + (view === 'category' ? 'border-b-2 border-black font-semibold' : 'text-gray-500')}
-        >
-          By Category
-        </button>
-        <button
-          onClick={() => setView('all')}
-          className={"px-3 py-2 text-sm " + (view === 'all' ? 'border-b-2 border-black font-semibold' : 'text-gray-500')}
-        >
-          All A-Z ({filtered.length})
-        </button>
-        <button
-          onClick={() => setView('recent')}
-          className={"px-3 py-2 text-sm " + (view === 'recent' ? 'border-b-2 border-black font-semibold' : 'text-gray-500')}
-        >
-          Recent
-        </button>
+      <div className="flex gap-1 mb-6 bg-white/60 rounded-full p-1 border border-orange-100">
+        {(['category', 'all', 'recent'] as View[]).map(v => (
+          <button
+            key={v}
+            onClick={() => setView(v)}
+            className={
+              'flex-1 py-2 rounded-full text-sm font-medium transition-colors ' +
+              (view === v ? 'bg-orange-600 text-white' : 'text-stone-600 active:bg-orange-50')
+            }
+          >
+            {v === 'category' ? 'Category' : v === 'all' ? 'A–Z' : 'Recent'}
+          </button>
+        ))}
       </div>
 
       {view === 'recent' ? (
         filtered.length === 0 ? (
-          <p className="text-gray-400 text-sm">No recipes found.</p>
+          <p className="text-stone-400 text-sm text-center py-12">No recipes found</p>
         ) : (
-          <ul className="space-y-2">
+          <div className="space-y-2">
             {filtered.map(recipe => (
-              <li key={recipe.id}>
-                <div className="flex items-baseline justify-between gap-2">
-                  <Link href={'/recipe/' + recipe.id} className="text-blue-600 underline">
-                    {recipe.title}
-                  </Link>
-                  <span className="text-xs text-gray-400 whitespace-nowrap">
-                    {timeAgo(recipe.created_at)}
-                  </span>
-                </div>
-                <div className="text-xs text-gray-500">
-                  {recipe.category} - by {recipe.profiles?.display_name || 'unknown'}
-                </div>
-              </li>
+              <RecipeCard key={recipe.id} recipe={recipe} showTimestamp />
             ))}
-          </ul>
+          </div>
         )
       ) : view === 'all' ? (
         alphabetical.length === 0 ? (
-          <p className="text-gray-400 text-sm">No recipes found.</p>
+          <p className="text-stone-400 text-sm text-center py-12">No recipes found</p>
         ) : (
-          <ul className="space-y-1">
+          <div className="space-y-2">
             {alphabetical.map(recipe => (
-              <li key={recipe.id}>
-                <Link href={'/recipe/' + recipe.id} className="text-blue-600 underline">
-                  {recipe.title}
-                </Link>
-                <span className="text-xs text-gray-500 ml-2">
-                  {recipe.category} - by {recipe.profiles?.display_name || 'unknown'}
-                </span>
-              </li>
+              <RecipeCard key={recipe.id} recipe={recipe} />
             ))}
-          </ul>
+          </div>
         )
       ) : (
         <>
@@ -146,22 +148,17 @@ export default function RecipeBrowser({ recipes }: { recipes: Recipe[] }) {
             if (search && catRecipes.length === 0) return null
             return (
               <section key={category} className="mb-6">
-                <h2 className="text-xl font-semibold mb-2">{category}</h2>
+                <h2 className="text-xs uppercase tracking-wider font-semibold text-stone-500 mb-2 px-1">
+                  {category}
+                </h2>
                 {catRecipes.length === 0 ? (
-                  <p className="text-gray-400 text-sm">No recipes yet.</p>
+                  <p className="text-stone-400 text-sm px-1 py-2">No recipes yet</p>
                 ) : (
-                  <ul className="space-y-1">
+                  <div className="space-y-2">
                     {catRecipes.map(recipe => (
-                      <li key={recipe.id}>
-                        <Link href={'/recipe/' + recipe.id} className="text-blue-600 underline">
-                          {recipe.title}
-                        </Link>
-                        <span className="text-xs text-gray-500 ml-2">
-                          by {recipe.profiles?.display_name || 'unknown'}
-                        </span>
-                      </li>
+                      <RecipeCard key={recipe.id} recipe={recipe} />
                     ))}
-                  </ul>
+                  </div>
                 )}
               </section>
             )

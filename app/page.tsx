@@ -10,10 +10,11 @@ export default async function HomePage() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">Recipe App</h1>
-          <p className="mb-6 text-gray-600">Sign in to start adding recipes</p>
-          <Link href="/login" className="inline-block px-6 py-3 bg-orange-600 text-white rounded-lg">
+        <div className="text-center max-w-sm">
+          <div className="text-6xl mb-4">🍳</div>
+          <h1 className="text-3xl font-bold mb-2">Recipe App</h1>
+          <p className="mb-8 text-stone-600">Sign in to start adding recipes</p>
+          <Link href="/login" className="inline-block px-8 py-3.5 bg-orange-600 text-white rounded-full font-medium">
             Sign In
           </Link>
         </div>
@@ -33,25 +34,35 @@ export default async function HomePage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-4 pb-16">
       <div className="max-w-2xl mx-auto">
-        <header className="flex justify-between items-center mb-2">
-          <h1 className="text-3xl font-bold">Recipe App</h1>
-          <div className="flex gap-3 text-sm items-center">
-            <Link href="/help" className="text-gray-600 underline">Help</Link>
-            <Link href="/profile" className="text-gray-600 underline">Profile</Link>
-            <form action={signOut}>
-              <button className="text-gray-600 underline">Sign out</button>
-            </form>
+        <header className="mb-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Recipes</h1>
+              <p className="text-stone-500 text-sm mt-0.5">Hi, {myProfile?.display_name || user.email}</p>
+            </div>
+            <div className="flex gap-4 text-sm text-stone-600 pt-1">
+              <Link href="/help">Help</Link>
+              <Link href="/profile">Profile</Link>
+              <form action={signOut}>
+                <button type="submit" className="text-stone-600">Sign out</button>
+              </form>
+            </div>
           </div>
         </header>
-        <p className="text-gray-500 text-sm mb-6">Signed in as {myProfile?.display_name || user.email}</p>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <Link href="/new" className="block px-4 py-3 bg-orange-600 text-white rounded-lg text-center text-sm font-medium">
+          <Link
+            href="/new"
+            className="flex items-center justify-center py-3.5 bg-orange-600 text-white rounded-2xl font-medium active:bg-orange-700 transition-colors"
+          >
             + Add Recipe
           </Link>
-          <Link href="/scan" className="block px-4 py-3 bg-orange-500 text-white rounded-lg text-center text-sm font-medium">
+          <Link
+            href="/scan"
+            className="flex items-center justify-center py-3.5 bg-white text-orange-700 border border-orange-200 rounded-2xl font-medium active:bg-orange-50 transition-colors"
+          >
             Scan Recipe
           </Link>
         </div>
@@ -61,8 +72,3 @@ export default async function HomePage() {
     </div>
   )
 }
-
-
-
-
-

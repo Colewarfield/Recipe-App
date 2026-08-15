@@ -41,57 +41,62 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
   const ingredientSections = parseSections(recipe.ingredients || [])
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-4 pb-16">
       <div className="max-w-xl mx-auto">
-        <div className="mb-4">
-          <Link href="/" className="text-sm text-gray-600 underline">Back</Link>
-        </div>
+        <Link href="/" className="inline-block mb-4 text-sm text-stone-600">
+          ← Back
+        </Link>
 
-        <h1 className="text-3xl font-bold mb-2">{recipe.title}</h1>
-        <div className="text-sm text-gray-500 mb-4">
-          {recipe.category} - by {(recipe.profiles as any)?.display_name || 'unknown'}
+        <h1 className="text-3xl font-bold tracking-tight mb-3">{recipe.title}</h1>
+        <div className="flex items-center gap-2 mb-6 flex-wrap">
+          <span className="inline-block px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-semibold">
+            {recipe.category}
+          </span>
+          <span className="text-sm text-stone-500">
+            by {(recipe.profiles as any)?.display_name || 'unknown'}
+          </span>
         </div>
 
         <Link
           href={'/recipe/' + recipe.id + '/cook'}
-          className="block mb-6 py-3 bg-orange-600 text-white text-center rounded-lg font-medium"
+          className="block mb-6 py-3.5 bg-orange-600 text-white text-center rounded-2xl font-medium active:bg-orange-700 transition-colors"
         >
           Start cooking
         </Link>
 
-        <section className="mb-6">
-          <div className="flex justify-between items-baseline mb-2 gap-2">
-            <h2 className="text-xl font-semibold">Ingredients</h2>
+        <section className="mb-4 bg-white rounded-2xl p-5 border border-orange-100">
+          <div className="flex justify-between items-baseline mb-3 gap-2">
+            <h2 className="text-lg font-semibold">Ingredients</h2>
             <ExportGroceryButton ingredients={recipe.ingredients || []} recipeTitle={recipe.title} />
           </div>
           {ingredientSections.map((sec, i) => (
             <div key={i} className={i > 0 ? 'mt-4' : ''}>
-              {sec.title && <h3 className="font-semibold text-gray-800 mb-1">{sec.title}</h3>}
-              <ul className="list-disc pl-5 space-y-1">
+              {sec.title && <h3 className="font-semibold text-stone-800 mb-1">{sec.title}</h3>}
+              <ul className="list-disc pl-5 space-y-1 text-stone-800 leading-relaxed">
                 {sec.items.map((ing, j) => (<li key={j}>{ing}</li>))}
               </ul>
             </div>
           ))}
         </section>
 
-        <section className="mb-6 pt-6 border-t border-gray-200">
-          <h2 className="text-xl font-semibold mb-2">Steps</h2>
-          <ol className="list-decimal pl-5 space-y-2">
+        <section className="mb-4 bg-white rounded-2xl p-5 border border-orange-100">
+          <h2 className="text-lg font-semibold mb-3">Steps</h2>
+          <ol className="list-decimal pl-5 space-y-2 text-stone-800 leading-relaxed marker:text-orange-500 marker:font-semibold">
             {recipe.steps.map((step: string, i: number) => (<li key={i}>{step}</li>))}
           </ol>
         </section>
 
         {recipe.notes && (
-          <section className="mb-6 pt-6 border-t border-gray-200">
-            <h2 className="text-xl font-semibold mb-2">Notes</h2>
-            <p className="whitespace-pre-wrap text-gray-700">{recipe.notes}</p>
+          <section className="mb-4 bg-white rounded-2xl p-5 border border-orange-100">
+            <h2 className="text-lg font-semibold mb-3">Notes</h2>
+            <p className="whitespace-pre-wrap text-stone-800 leading-relaxed">{recipe.notes}</p>
           </section>
         )}
 
         {isOwner && (
-          <div className="mt-8 pt-6 border-t border-gray-200 flex items-center gap-4">
-            <Link href={'/recipe/' + recipe.id + '/edit'} className="text-blue-600 text-sm underline">
-              Edit this recipe
+          <div className="mt-6 flex items-center justify-between gap-4 px-2">
+            <Link href={'/recipe/' + recipe.id + '/edit'} className="text-orange-700 text-sm font-medium">
+              Edit recipe
             </Link>
             <DeleteRecipeButton recipeId={recipe.id} />
           </div>
@@ -100,4 +105,3 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
     </div>
   )
 }
-
