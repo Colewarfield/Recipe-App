@@ -259,3 +259,84 @@ Webpage text:
   }
 }
 
+
+
+export async function scanRecipeFromText(text: string): Promise<ScannedRecipe> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not signed in')
+
+  const cleaned = text.trim()
+  if (cleaned.length < 20) throw new Error('Not enough text. Paste the full recipe.')
+  if (cleaned.length > 50000) throw new Error('Text is too long. Trim it down under 50000 characters.')
+
+  const apiKey = process.env.GEMINI_API_KEY
+  if (!apiKey) throw new Error('Server not configured: GEMINI_API_KEY missing')
+
+  const ai = new GoogleGenAI({ apiKey })
+  const prompt = `You are a recipe extraction assistant. Extract the recipe from the text below and return valid JSON matching this schema:
+
+{
+  "title": string,
+  "category": one of "Breakfast", "Lunch", "Dinner", "Dessert", "Snacks", "Drinks",
+  "ingredients": array of strings,
+  "steps": array of strings,
+  "notes": string
+}
+
+Rules:
+- Extract only the recipe itself; ignore any noise (site names, ad copy, comments).
+- Guess the category from context.
+- Each ingredient is one array item WITH its amount (e.g., "2 cups flour").
+- If MULTIPLE distinct ingredient groups exist (e.g., "For the sauce"), preserve them using "## Group Name" as a line before that group.
+- Each step is one array item, in order, concise but complete.
+- Notes: any cook tips, servings, prep time from the recipe itself; empty string if none.
+- If the text does not contain an actual recipe, return { "title": "", "ingredients": [], "steps": [] }.
+
+Text:
+` + cleaned
+
+  const clientAny = ai as unknown as {
+    interactions: {
+      create: (args: unknown) => Promise<{ output_text?: string; outputText?: string }>
+    }
+  }
+
+  const schema = {
+    type: 'object',
+    properties: {
+      title: { type: 'string' },
+      category: { type: 'string' },
+      ingredients: { type: 'array', items: { type: 'string' } },
+      steps: { type: 'array', items: { type: 'string' } },
+      notes: { type: 'string' },
+    },
+    required: ['title', 'category', 'ingredients', 'steps'],
+  }
+
+  const interaction = await clientAny.interactions.create({
+    model: 'gemini-3.6-flash',
+    input: [{ type: 'text', text: prompt }],
+    response_format: [{ type: 'text', mime_type: 'application/json', schema }],
+  })
+
+  const responseText = interaction.output_text ?? interaction.outputText ?? ''
+
+  try {
+    const parsed = JSON.parse(responseText)
+    if (!parsed.title || !Array.isArray(parsed.ingredients) || parsed.ingredients.length === 0) {
+      throw new Error('Could not find a recipe in that text. Make sure you copied the full recipe including ingredients and steps.')
+    }
+    return {
+      title: String(parsed.title),
+      category: VALID_CATEGORIES.includes(parsed.category) ? parsed.category : 'Dinner',
+      ingredients: parsed.ingredients.map(String),
+      steps: Array.isArray(parsed.steps) ? parsed.steps.map(String) : [],
+      notes: String(parsed.notes || ''),
+    }
+  } catch (e) {
+    if (e instanceof Error && e.message.includes('Could not find')) throw e
+    console.error('Gemini raw response:', responseText)
+    throw new Error('Could not parse the recipe. Try pasting just the recipe portion.')
+  }
+}

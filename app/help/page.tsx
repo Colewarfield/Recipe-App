@@ -43,6 +43,11 @@ export default function HelpPage() {
         </section>
 
         <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Pasting recipe text</h2>
+          <p className="text-gray-800 dark:text-stone-200">On the Scan Recipe page, scroll to the <b>Paste recipe text</b> section. Copy any recipe you can see in your browser (or a text message, a note, anywhere), paste it into the box, and tap <b>Extract from Text</b>. Best fallback when a URL is blocked by the site&apos;s bot protection.</p>
+        </section>
+
+        <section className="mb-8">
           <h2 className="text-xl font-semibold mb-2">Scanning a recipe with AI</h2>
           <ol className="list-decimal pl-5 space-y-1 text-gray-800 dark:text-stone-200">
             <li>Tap <b>Scan Recipe</b>.</li>
@@ -139,11 +144,12 @@ export default function HelpPage() {
           <p className="text-gray-800 dark:text-stone-200">Tap <b>Profile</b> at the top of the home page, then tap <b>Sign out</b> at the bottom of the Profile page.</p>
         </section>
 
-        <p className="text-xs text-gray-400 dark:text-stone-500 mt-12">Last updated after adding URL import to the Scan page.</p>
+        <p className="text-xs text-gray-400 dark:text-stone-500 mt-12">Last updated after adding the Paste Recipe Text fallback.</p>
       </div>
     </div>
   )
 }
+
 
 
 

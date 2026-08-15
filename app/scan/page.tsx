@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import BackButton from '@/components/BackButton'
-import { scanRecipe, scanRecipeFromUrl, type ScannedRecipe } from './actions'
+import { scanRecipe, scanRecipeFromUrl, scanRecipeFromText, type ScannedRecipe } from './actions'
 import { createRecipe } from '../actions'
 
 const CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snacks', 'Drinks']
@@ -32,7 +32,8 @@ async function compressImage(file: File, maxWidth = 1400, quality = 0.82): Promi
 export default function ScanPage() {
   const [images, setImages] = useState<File[]>([])
   const [url, setUrl] = useState('')
-  const [busy, setBusy] = useState<'idle' | 'photos' | 'url'>('idle')
+  const [pastedText, setPastedText] = useState('')
+  const [busy, setBusy] = useState<'idle' | 'photos' | 'url' | 'text'>('idle')
   const [error, setError] = useState('')
   const [scanned, setScanned] = useState(false)
 
@@ -82,10 +83,25 @@ export default function ScanPage() {
     }
   }
 
+  async function handleTextScan() {
+    if (!pastedText.trim()) return
+    setBusy('text')
+    setError('')
+    try {
+      const result = await scanRecipeFromText(pastedText)
+      applyResult(result)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to extract')
+    } finally {
+      setBusy('idle')
+    }
+  }
+
   function resetScan() {
     setScanned(false)
     setImages([])
     setUrl('')
+    setPastedText('')
     setTitle('')
     setCategory('Dinner')
     setIngredients('')
@@ -105,9 +121,8 @@ export default function ScanPage() {
             <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 border-blue-200 dark:border-slate-700">
               <h2 className="text-lg font-semibold mb-2">From photos</h2>
               <p className="text-sm text-stone-600 dark:text-stone-400 mb-3">
-                Upload one or more images (screenshots, cookbook photos, etc.). Multiple images from the same recipe get combined.
+                Upload one or more images. Multiple images from the same recipe get combined.
               </p>
-
               <input
                 type="file"
                 accept="image/*"
@@ -115,7 +130,6 @@ export default function ScanPage() {
                 onChange={(e) => setImages(Array.from(e.target.files || []))}
                 className="block w-full text-sm border-2 border-blue-100 dark:border-slate-700 rounded-lg p-2 mb-3"
               />
-
               {images.length > 0 && (
                 <>
                   <div className="text-sm text-stone-600 dark:text-stone-400 mb-2">
@@ -124,17 +138,12 @@ export default function ScanPage() {
                   <div className="grid grid-cols-3 gap-2 mb-3">
                     {images.map((img, i) => (
                       <div key={i} className="aspect-square border rounded-lg overflow-hidden bg-gray-50 dark:bg-slate-700">
-                        <img
-                          src={URL.createObjectURL(img)}
-                          alt={'Preview ' + (i + 1)}
-                          className="w-full h-full object-cover"
-                        />
+                        <img src={URL.createObjectURL(img)} alt={'Preview ' + (i + 1)} className="w-full h-full object-cover" />
                       </div>
                     ))}
                   </div>
                 </>
               )}
-
               <button
                 type="button"
                 onClick={handleImageScan}
@@ -154,9 +163,8 @@ export default function ScanPage() {
             <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 border-blue-200 dark:border-slate-700">
               <h2 className="text-lg font-semibold mb-2">From URL</h2>
               <p className="text-sm text-stone-600 dark:text-stone-400 mb-3">
-                Paste any recipe URL (blog post, cooking site, etc.) and we&apos;ll scrape the page.
+                Paste a recipe URL. Works with most sites; some big sites with bot protection may block us.
               </p>
-
               <input
                 type="url"
                 placeholder="https://example.com/recipe"
@@ -164,14 +172,41 @@ export default function ScanPage() {
                 onChange={(e) => setUrl(e.target.value)}
                 className="w-full px-4 py-2.5 border-2 border-blue-100 dark:border-slate-700 rounded-xl text-sm mb-3"
               />
-
               <button
                 type="button"
                 onClick={handleUrlScan}
                 disabled={busy !== 'idle' || !url.trim()}
                 className="w-full px-4 py-3 bg-blue-600 text-white rounded-2xl font-medium disabled:opacity-50"
               >
-                {busy === 'url' ? 'Fetching &amp; extracting...' : 'Import from URL'}
+                {busy === 'url' ? 'Fetching page...' : 'Import from URL'}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-blue-200 dark:bg-slate-700" />
+              <span className="text-xs text-stone-500 dark:text-stone-400 font-semibold">OR</span>
+              <div className="flex-1 h-px bg-blue-200 dark:bg-slate-700" />
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 border-blue-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-2">Paste recipe text</h2>
+              <p className="text-sm text-stone-600 dark:text-stone-400 mb-3">
+                Open the recipe in your browser, select all the recipe text (ingredients + steps), copy, and paste here. Best fallback when a site blocks URL scraping.
+              </p>
+              <textarea
+                placeholder="Paste the recipe text here..."
+                value={pastedText}
+                onChange={(e) => setPastedText(e.target.value)}
+                rows={8}
+                className="w-full px-3 py-2 border-2 border-blue-100 dark:border-slate-700 rounded-xl text-sm mb-3"
+              />
+              <button
+                type="button"
+                onClick={handleTextScan}
+                disabled={busy !== 'idle' || !pastedText.trim()}
+                className="w-full px-4 py-3 bg-blue-600 text-white rounded-2xl font-medium disabled:opacity-50"
+              >
+                {busy === 'text' ? 'Extracting...' : 'Extract from Text'}
               </button>
             </div>
 
@@ -190,84 +225,40 @@ export default function ScanPage() {
             <form action={createRecipe} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded"
-                />
+                <input type="text" name="title" value={title} onChange={(e) => setTitle(e.target.value)} required className="w-full px-3 py-2 border rounded" />
               </div>
-
               <div>
                 <label className="block text-sm font-medium mb-1">Category</label>
-                <select
-                  name="category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded"
-                >
+                <select name="category" value={category} onChange={(e) => setCategory(e.target.value)} required className="w-full px-3 py-2 border rounded">
                   {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
-
               <div>
                 <label className="block text-sm font-medium mb-1">
                   Ingredients <span className="text-gray-500 font-normal">(one per line - use ## Name for section headers)</span>
                 </label>
-                <textarea
-                  name="ingredients"
-                  value={ingredients}
-                  onChange={(e) => setIngredients(e.target.value)}
-                  rows={8}
-                  required
-                  className="w-full px-3 py-2 border rounded font-mono text-sm"
-                />
+                <textarea name="ingredients" value={ingredients} onChange={(e) => setIngredients(e.target.value)} rows={8} required className="w-full px-3 py-2 border rounded font-mono text-sm" />
               </div>
-
               <div>
                 <label className="block text-sm font-medium mb-1">
                   Steps <span className="text-gray-500 font-normal">(one per line)</span>
                 </label>
-                <textarea
-                  name="steps"
-                  value={steps}
-                  onChange={(e) => setSteps(e.target.value)}
-                  rows={10}
-                  required
-                  className="w-full px-3 py-2 border rounded text-sm"
-                />
+                <textarea name="steps" value={steps} onChange={(e) => setSteps(e.target.value)} rows={10} required className="w-full px-3 py-2 border rounded text-sm" />
               </div>
-
               <div>
                 <label className="block text-sm font-medium mb-1">
                   Notes <span className="text-gray-500 font-normal">(optional)</span>
                 </label>
-                <textarea
-                  name="notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={3}
-                  className="w-full px-3 py-2 border rounded text-sm"
-                />
+                <textarea name="notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className="w-full px-3 py-2 border rounded text-sm" />
               </div>
-
               <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" name="is_public" defaultChecked />
                 Make this public
               </label>
-
               <button type="submit" className="w-full px-4 py-3 bg-blue-600 text-white rounded-2xl font-medium">
                 Save Recipe
               </button>
-
-              <button
-                type="button"
-                onClick={resetScan}
-                className="w-full py-2 text-stone-600 dark:text-stone-300 underline text-sm"
-              >
+              <button type="button" onClick={resetScan} className="w-full py-2 text-stone-600 dark:text-stone-300 underline text-sm">
                 Scan something else
               </button>
             </form>
