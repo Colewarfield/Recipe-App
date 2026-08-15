@@ -96,7 +96,7 @@ export default async function EditRecipePage({ params }: { params: Promise<{ id:
             <Link href={'/recipe/' + id} className="flex-1 px-4 py-3 border rounded-lg text-center">
               Cancel
             </Link>
-            <button type="submit" className="flex-1 px-4 py-3 bg-orange-600 text-white rounded-lg">
+            <button type="submit" className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg">
               Save Changes
             </button>
           </div>
@@ -105,5 +105,6 @@ export default async function EditRecipePage({ params }: { params: Promise<{ id:
     </div>
   )
 }
+
 
 

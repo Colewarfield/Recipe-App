@@ -2,6 +2,7 @@
 import { signOut } from './actions'
 import Link from 'next/link'
 import RecipeBrowser from '@/components/RecipeBrowser'
+import ThemeToggle from '@/components/ThemeToggle'
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -13,8 +14,8 @@ export default async function HomePage() {
         <div className="text-center max-w-sm">
           <div className="text-6xl mb-4">🍳</div>
           <h1 className="text-3xl font-bold mb-2">Recipe App</h1>
-          <p className="mb-8 text-stone-600">Sign in to start adding recipes</p>
-          <Link href="/login" className="inline-block px-8 py-3.5 bg-orange-600 text-white rounded-full font-medium">
+          <p className="mb-8 text-stone-600 dark:text-stone-400">Sign in to start adding recipes</p>
+          <Link href="/login" className="inline-block px-8 py-3.5 bg-blue-600 text-white rounded-full font-medium">
             Sign In
           </Link>
         </div>
@@ -40,13 +41,14 @@ export default async function HomePage() {
           <div className="flex justify-between items-start">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Recipes</h1>
-              <p className="text-stone-500 text-sm mt-0.5">Hi, {myProfile?.display_name || user.email}</p>
+              <p className="text-stone-500 dark:text-stone-400 text-sm mt-0.5">Hi, {myProfile?.display_name || user.email}</p>
             </div>
-            <div className="flex gap-4 text-sm text-stone-600 pt-1">
+            <div className="flex gap-4 items-center text-sm text-stone-600 dark:text-stone-300 pt-1">
+              <ThemeToggle />
               <Link href="/help">Help</Link>
               <Link href="/profile">Profile</Link>
               <form action={signOut}>
-                <button type="submit" className="text-stone-600">Sign out</button>
+                <button type="submit" className="text-stone-600 dark:text-stone-300">Sign out</button>
               </form>
             </div>
           </div>
@@ -55,13 +57,13 @@ export default async function HomePage() {
         <div className="grid grid-cols-2 gap-3 mb-6">
           <Link
             href="/new"
-            className="flex items-center justify-center py-3.5 bg-orange-600 text-white rounded-2xl font-medium active:bg-orange-700 transition-colors"
+            className="flex items-center justify-center py-3.5 bg-blue-600 text-white rounded-2xl font-medium active:bg-blue-700 transition-colors"
           >
             + Add Recipe
           </Link>
           <Link
             href="/scan"
-            className="flex items-center justify-center py-3.5 bg-white text-orange-700 border border-orange-200 rounded-2xl font-medium active:bg-orange-50 transition-colors"
+            className="flex items-center justify-center py-3.5 bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-slate-700 rounded-2xl font-medium active:bg-blue-50 dark:active:bg-slate-700 transition-colors"
           >
             Scan Recipe
           </Link>

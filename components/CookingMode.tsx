@@ -28,9 +28,7 @@ export default function CookingMode({ recipe }: { recipe: Recipe }) {
           lock = await nav.wakeLock.request('screen')
           setWakeActive(true)
         }
-      } catch {
-        // Wake Lock not supported or denied - fail silently
-      }
+      } catch {}
     }
 
     acquire()
@@ -54,24 +52,16 @@ export default function CookingMode({ recipe }: { recipe: Recipe }) {
     .map((line, i) => {
       const trimmed = String(line).trim()
       const isHeader = trimmed.startsWith('##')
-      return {
-        index: i,
-        text: isHeader ? trimmed.replace(/^#+\s*/, '') : trimmed,
-        isHeader,
-      }
+      return { index: i, text: isHeader ? trimmed.replace(/^#+\s*/, '') : trimmed, isHeader }
     })
     .filter(x => x.text)
 
   return (
-    <div className="min-h-screen bg-orange-50 p-4">
+    <div className="min-h-screen p-4">
       <div className="max-w-2xl mx-auto">
         <div className="mb-6 flex justify-between items-center">
-          <Link href={'/recipe/' + recipe.id} className="text-sm text-stone-600 underline">
-            Exit cooking mode
-          </Link>
-          {wakeActive && (
-            <span className="text-xs text-stone-500">Screen stays awake</span>
-          )}
+          <Link href={'/recipe/' + recipe.id} className="text-sm text-stone-600 dark:text-stone-300 underline">Exit cooking mode</Link>
+          {wakeActive && (<span className="text-xs text-stone-500 dark:text-stone-400">Screen stays awake</span>)}
         </div>
 
         <h1 className="text-4xl font-bold mb-6">{recipe.title}</h1>
@@ -82,7 +72,7 @@ export default function CookingMode({ recipe }: { recipe: Recipe }) {
             {items.map(item => (
               item.isHeader ? (
                 <li key={item.index} className="pt-4 first:pt-0">
-                  <div className="font-semibold text-lg text-orange-700">{item.text}</div>
+                  <div className="font-semibold text-lg text-blue-700 dark:text-blue-400">{item.text}</div>
                 </li>
               ) : (
                 <li key={item.index} className="flex items-start gap-3">
@@ -91,11 +81,11 @@ export default function CookingMode({ recipe }: { recipe: Recipe }) {
                     id={'ing-' + item.index}
                     checked={!!checked[item.index]}
                     onChange={() => toggle(item.index)}
-                    className="mt-1.5 w-5 h-5 accent-orange-600 flex-shrink-0"
+                    className="mt-1.5 w-5 h-5 accent-blue-600 flex-shrink-0"
                   />
                   <label
                     htmlFor={'ing-' + item.index}
-                    className={'text-lg leading-snug cursor-pointer ' + (checked[item.index] ? 'line-through text-stone-400' : '')}
+                    className={'text-lg leading-snug cursor-pointer ' + (checked[item.index] ? 'line-through text-stone-400 dark:text-stone-500' : '')}
                   >
                     {item.text}
                   </label>
@@ -105,33 +95,27 @@ export default function CookingMode({ recipe }: { recipe: Recipe }) {
           </ul>
         </section>
 
-        <section className="pt-6 border-t border-orange-200">
+        <section className="pt-6 border-t border-blue-200 dark:border-slate-700">
           <h2 className="text-2xl font-semibold mb-4">Steps</h2>
           <ol className="space-y-6">
             {recipe.steps.map((step, i) => (
               <li key={i} className="flex gap-4">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-orange-600 text-white flex items-center justify-center font-bold">
-                  {i + 1}
-                </div>
-                <div className="text-lg leading-relaxed pt-1">
-                  {String(step)}
-                </div>
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">{i + 1}</div>
+                <div className="text-lg leading-relaxed pt-1">{String(step)}</div>
               </li>
             ))}
           </ol>
         </section>
 
         {recipe.notes && (
-          <section className="mt-8 pt-6 border-t border-orange-200">
+          <section className="mt-8 pt-6 border-t border-blue-200 dark:border-slate-700">
             <h2 className="text-2xl font-semibold mb-3">Notes</h2>
-            <p className="whitespace-pre-wrap text-lg text-stone-700">{recipe.notes}</p>
+            <p className="whitespace-pre-wrap text-lg text-stone-700 dark:text-stone-300">{recipe.notes}</p>
           </section>
         )}
 
         <div className="mt-12 text-center pb-8">
-          <Link href={'/recipe/' + recipe.id} className="text-stone-600 underline">
-            Exit cooking mode
-          </Link>
+          <Link href={'/recipe/' + recipe.id} className="text-stone-600 dark:text-stone-300 underline">Exit cooking mode</Link>
         </div>
       </div>
     </div>

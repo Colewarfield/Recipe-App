@@ -121,7 +121,7 @@ export default function ScanPage() {
               type="button"
               onClick={handleScan}
               disabled={scanning || images.length === 0}
-              className="w-full px-4 py-3 bg-orange-500 text-white rounded-lg disabled:opacity-50"
+              className="w-full px-4 py-3 bg-blue-500 text-white rounded-lg disabled:opacity-50"
             >
               {scanning ? 'Extracting (10-20s)...' : 'Extract Recipe with AI'}
             </button>
@@ -210,7 +210,7 @@ export default function ScanPage() {
                 Make this public
               </label>
 
-              <button type="submit" className="w-full px-4 py-3 bg-orange-600 text-white rounded-lg">
+              <button type="submit" className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg">
                 Save Recipe
               </button>
 
@@ -228,5 +228,6 @@ export default function ScanPage() {
     </div>
   )
 }
+
 
 

@@ -51,11 +51,12 @@ export default async function NewRecipePage() {
             Make this public (visible to everyone)
           </label>
 
-          <button type="submit" className="w-full px-4 py-3 bg-orange-600 text-white rounded-lg">Save Recipe</button>
+          <button type="submit" className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg">Save Recipe</button>
         </form>
       </div>
     </div>
   )
 }
+
 
 

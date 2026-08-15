@@ -43,10 +43,11 @@ export default function ExportGroceryButton({ ingredients, recipeTitle }: Props)
     <button
       type="button"
       onClick={handleExport}
-      className="text-sm text-blue-600 underline whitespace-nowrap"
+      className="text-sm text-blue-600 dark:text-blue-400 underline whitespace-nowrap"
       title="Copy or share the ingredients as a grocery list"
     >
       {status === 'copied' ? 'Copied!' : 'Export list'}
     </button>
   )
 }
+

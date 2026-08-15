@@ -75,6 +75,11 @@ export default function HelpPage() {
         </section>
 
         <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Light &amp; dark mode</h2>
+          <p className="text-gray-800 dark:text-stone-200">Tap the sun/moon icon in the top-right of the home page to switch between light and dark mode. Your choice is remembered on this device (each device is independent).</p>
+        </section>
+
+        <section className="mb-8">
           <h2 className="text-xl font-semibold mb-2">Exporting a grocery list</h2>
           <p className="text-gray-800">Open any recipe and tap <b>Export list</b> next to the Ingredients heading. On iPhone this opens the Share sheet so you can send the ingredients straight to the Notes app, Messages, Mail, or anywhere else. On desktop it copies the list to your clipboard.</p>
         </section>
@@ -114,10 +119,11 @@ export default function HelpPage() {
           <p className="text-gray-800">Tap <b>Sign out</b> at the top of the home page. You&apos;ll stay signed out until you sign in again.</p>
         </section>
 
-        <p className="text-xs text-gray-400 mt-12">Last updated after cooking mode and the warm color theme.</p>
+        <p className="text-xs text-gray-400 mt-12">Last updated after the blue theme and dark mode toggle.</p>
       </div>
     </div>
   )
 }
+
 
 

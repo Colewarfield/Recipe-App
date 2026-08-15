@@ -15,17 +15,25 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#c2410c',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#2563eb' },
+    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+  ],
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
 }
 
+const themeInitScript = "(function(){try{var s=localStorage.getItem('theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var dark=s==='dark'||(s===null&&d);if(dark)document.documentElement.classList.add('dark');}catch(e){}})();"
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.className}>
-      <body className="antialiased bg-orange-50 text-stone-900 min-h-screen">{children}</body>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body className="antialiased bg-blue-50 dark:bg-slate-900 text-stone-900 dark:text-stone-100 min-h-screen transition-colors">{children}</body>
     </html>
   )
 }
