@@ -1,6 +1,6 @@
 ﻿import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { updateProfile } from '../actions'
+import { updateProfile, signOut } from '../actions'
 import Link from 'next/link'
 import ThemeSchemeSelector from '@/components/ThemeSchemeSelector'
 
@@ -48,6 +48,12 @@ export default async function ProfilePage() {
           <ThemeSchemeSelector />
         </div>
 
+        <form action={signOut} className="mt-10">
+          <button type="submit" className="w-full py-3 border-2 border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 rounded-2xl font-medium active:bg-red-50 dark:active:bg-red-950/30">
+            Sign out
+          </button>
+        </form>
+
         <div className="mt-8 pt-6 border-t">
           <p className="text-sm text-gray-500">
             Email: {user.email}
@@ -57,6 +63,7 @@ export default async function ProfilePage() {
     </div>
   )
 }
+
 
 
 

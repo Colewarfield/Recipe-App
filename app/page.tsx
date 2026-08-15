@@ -1,5 +1,4 @@
 ﻿import { createClient } from '@/lib/supabase/server'
-import { signOut } from './actions'
 import Link from 'next/link'
 import RecipeBrowser from '@/components/RecipeBrowser'
 import ThemeToggle from '@/components/ThemeToggle'
@@ -47,9 +46,6 @@ export default async function HomePage() {
               <ThemeToggle />
               <Link href="/help">Help</Link>
               <Link href="/profile">Profile</Link>
-              <form action={signOut}>
-                <button type="submit" className="text-stone-600 dark:text-stone-300">Sign out</button>
-              </form>
             </div>
           </div>
         </header>
@@ -63,7 +59,7 @@ export default async function HomePage() {
           </Link>
           <Link
             href="/scan"
-            className="flex items-center justify-center py-3.5 bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-400 border-2 border-blue-300 dark:border-slate-700 rounded-2xl font-medium active:bg-blue-50 dark:active:bg-slate-700 transition-colors"
+            className="flex items-center justify-center py-3.5 bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-400 border-2 border-blue-200 dark:border-slate-700 rounded-2xl font-medium active:bg-blue-50 dark:active:bg-slate-700 transition-colors"
           >
             Scan Recipe
           </Link>
@@ -74,4 +70,3 @@ export default async function HomePage() {
     </div>
   )
 }
-
