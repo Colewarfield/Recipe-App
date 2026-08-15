@@ -2,7 +2,6 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Default theme: Ocean (blue) */
 :root {
   --tp: #2563eb;
   --tp-hover: #1d4ed8;
@@ -57,15 +56,27 @@
   --pill-dark-bg: rgba(29, 185, 84, 0.18);
 }
 
-body {
-  background-color: var(--body-bg);
+[data-theme="boring"] {
+  --tp: #171717;
+  --tp-hover: #000000;
+  --tp-light: #f5f5f5;
+  --tp-light-fg: #171717;
+  --tp-dark-fg: #d4d4d4;
+  --tp-marker: #737373;
+  --tp-border-light: #e5e5e5;
+  --tp-border: #d4d4d4;
+  --tp-focus: #737373;
+  --body-bg: #fafafa;
+  --body-bg-dark: #0a0a0a;
+  --surface: #ffffff;
+  --surface-dark: #1a1a1a;
+  --border-dark: #262626;
+  --pill-dark-bg: rgba(115, 115, 115, 0.2);
 }
 
-.dark body {
-  background-color: var(--body-bg-dark);
-}
+body { background-color: var(--body-bg); }
+.dark body { background-color: var(--body-bg-dark); }
 
-/* Remap blue-* utility classes to theme variables */
 .bg-blue-600 { background-color: var(--tp) !important; }
 .bg-blue-100 { background-color: var(--tp-light) !important; }
 .bg-blue-50 { background-color: var(--body-bg) !important; }
@@ -81,12 +92,10 @@ body {
 .border-blue-600 { border-color: var(--tp) !important; }
 .marker\:text-blue-500::marker { color: var(--tp-marker) !important; }
 
-/* Translucent bg overrides (drop alpha, use solid) */
 .bg-blue-50\/90 { background-color: var(--body-bg) !important; }
 .bg-blue-50\/70 { background-color: var(--body-bg) !important; }
 .bg-white\/60 { background-color: var(--surface) !important; }
 
-/* Active states */
 .active\:bg-blue-700:active { background-color: var(--tp-hover) !important; }
 .active\:bg-blue-100:active { background-color: var(--tp-light) !important; }
 .active\:bg-blue-50\/70:active { background-color: var(--tp-light) !important; }
@@ -94,7 +103,6 @@ body {
 
 .focus\:border-blue-400:focus { border-color: var(--tp-focus) !important; }
 
-/* Dark mode overrides */
 .dark .dark\:bg-slate-800 { background-color: var(--surface-dark) !important; }
 .dark .dark\:bg-slate-900 { background-color: var(--body-bg-dark) !important; }
 .dark .dark\:bg-slate-900\/90 { background-color: var(--body-bg-dark) !important; }
@@ -106,7 +114,6 @@ body {
 .dark .dark\:text-blue-400 { color: var(--tp-dark-fg) !important; }
 .dark .dark\:bg-blue-900\/40 { background-color: var(--pill-dark-bg) !important; }
 
-/* Input defaults for dark mode */
 .dark input:not([type="checkbox"]):not([type="radio"]),
 .dark textarea,
 .dark select {

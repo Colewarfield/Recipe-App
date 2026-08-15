@@ -95,6 +95,11 @@ export default function HelpPage() {
         </section>
 
         <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Favorites</h2>
+          <p className="text-gray-800 dark:text-stone-200">Open any recipe and tap the star in the top-right to add it to your favorites. Tap again to remove. Your favorites appear in the <b>Faves</b> tab on the home page.</p>
+        </section>
+
+        <section className="mb-8">
           <h2 className="text-xl font-semibold mb-2">Editing a recipe</h2>
           <p className="text-gray-800 dark:text-stone-200">Open one of your own recipes, scroll to the bottom, tap <b>Edit this recipe</b>. Change anything and tap <b>Save Changes</b>. Tap <b>Cancel</b> to bail without saving.</p>
         </section>
@@ -129,11 +134,12 @@ export default function HelpPage() {
           <p className="text-gray-800 dark:text-stone-200">Tap <b>Profile</b> at the top of the home page, then tap <b>Sign out</b> at the bottom of the Profile page.</p>
         </section>
 
-        <p className="text-xs text-gray-400 dark:text-stone-500 mt-12">Last updated after adding the People tab.</p>
+        <p className="text-xs text-gray-400 dark:text-stone-500 mt-12">Last updated after adding Favorites and the Boring theme.</p>
       </div>
     </div>
   )
 }
+
 
 
 

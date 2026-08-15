@@ -1,9 +1,9 @@
 ﻿import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import BackButton from '@/components/BackButton'
 import DeleteRecipeButton from '@/components/DeleteRecipeButton'
 import ExportGroceryButton from '@/components/ExportGroceryButton'
+import FavoriteButton from '@/components/FavoriteButton'
 
 type Section = { title: string; items: string[] }
 
@@ -39,12 +39,34 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
   if (!recipe) notFound()
 
   const isOwner = user?.id === recipe.owner_id
+  let isFavorited = false
+  if (user) {
+    const { data: fav } = await supabase
+      .from('favorites')
+      .select('recipe_id')
+      .eq('user_id', user.id)
+      .eq('recipe_id', id)
+      .maybeSingle()
+    isFavorited = !!fav
+  }
+
   const ingredientSections = parseSections(recipe.ingredients || [])
 
   return (
     <div className="min-h-screen p-4 pb-16">
       <div className="max-w-xl mx-auto">
-        <BackButton href="/" />
+        <div className="sticky top-0 z-10 -mx-4 -mt-4 mb-4 px-4 py-3 bg-blue-50/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-blue-100 dark:border-slate-700 flex justify-between items-center">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 text-base font-medium text-stone-700 dark:text-stone-200 py-1 pr-2 -ml-1 active:opacity-60"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+            Back
+          </Link>
+          {user && <FavoriteButton recipeId={recipe.id} initialFavorited={isFavorited} />}
+        </div>
 
         <h1 className="text-3xl font-bold tracking-tight mb-3">{recipe.title}</h1>
         <div className="flex items-center gap-2 mb-6 flex-wrap">
@@ -104,5 +126,3 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
     </div>
   )
 }
-
-

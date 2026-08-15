@@ -15,12 +15,13 @@ type Recipe = {
   profiles: { display_name: string } | null
 }
 
-type View = 'category' | 'all' | 'recent' | 'people'
+type View = 'category' | 'all' | 'recent' | 'people' | 'favorites'
 
 type Props = {
   recipes: Recipe[]
   currentUserId?: string
   currentUserName?: string
+  favoriteIds?: string[]
 }
 
 function timeAgo(dateStr: string): string {
@@ -35,7 +36,7 @@ function timeAgo(dateStr: string): string {
   return Math.floor(days / 365) + 'y ago'
 }
 
-function RecipeCard({ recipe, showTimestamp = false, showAuthor = true }: { recipe: Recipe; showTimestamp?: boolean; showAuthor?: boolean }) {
+function RecipeCard({ recipe, showTimestamp = false, showAuthor = true, isFavorited = false }: { recipe: Recipe; showTimestamp?: boolean; showAuthor?: boolean; isFavorited?: boolean }) {
   return (
     <Link
       href={'/recipe/' + recipe.id}
@@ -43,7 +44,14 @@ function RecipeCard({ recipe, showTimestamp = false, showAuthor = true }: { reci
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <div className="font-semibold text-stone-900 dark:text-stone-100 text-base leading-snug">{recipe.title}</div>
+          <div className="flex items-center gap-1.5">
+            <div className="font-semibold text-stone-900 dark:text-stone-100 text-base leading-snug">{recipe.title}</div>
+            {isFavorited && (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-yellow-500 flex-shrink-0">
+                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+              </svg>
+            )}
+          </div>
           <div className="text-xs text-stone-500 dark:text-stone-400 mt-1">
             {recipe.category}
             {showAuthor && ' · ' + (recipe.profiles?.display_name || 'unknown')}
@@ -58,11 +66,13 @@ function RecipeCard({ recipe, showTimestamp = false, showAuthor = true }: { reci
   )
 }
 
-export default function RecipeBrowser({ recipes, currentUserId, currentUserName }: Props) {
+export default function RecipeBrowser({ recipes, currentUserId, currentUserName, favoriteIds }: Props) {
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [view, setView] = useState<View>('category')
   const [selectedPerson, setSelectedPerson] = useState<string>(currentUserId || '')
+
+  const favSet = useMemo(() => new Set(favoriteIds || []), [favoriteIds])
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -70,15 +80,11 @@ export default function RecipeBrowser({ recipes, currentUserId, currentUserName 
     return recipes.filter(r => r.title.toLowerCase().includes(q))
   }, [recipes, search])
 
-  const alphabetical = useMemo(() => {
-    return [...filtered].sort((a, b) => a.title.localeCompare(b.title))
-  }, [filtered])
+  const alphabetical = useMemo(() => [...filtered].sort((a, b) => a.title.localeCompare(b.title)), [filtered])
 
   const people = useMemo(() => {
     const map = new Map<string, string>()
-    if (currentUserId) {
-      map.set(currentUserId, (currentUserName || 'You') + ' (Me)')
-    }
+    if (currentUserId) map.set(currentUserId, (currentUserName || 'You') + ' (Me)')
     for (const r of recipes) {
       if (r.owner_id && !map.has(r.owner_id)) {
         map.set(r.owner_id, r.profiles?.display_name || 'Unknown')
@@ -87,11 +93,9 @@ export default function RecipeBrowser({ recipes, currentUserId, currentUserName 
     return Array.from(map.entries()).map(([id, name]) => ({ id, name }))
   }, [recipes, currentUserId, currentUserName])
 
-  const personRecipes = useMemo(() => {
-    return filtered
-      .filter(r => r.owner_id === selectedPerson)
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-  }, [filtered, selectedPerson])
+  const personRecipes = useMemo(() => filtered.filter(r => r.owner_id === selectedPerson).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()), [filtered, selectedPerson])
+
+  const favoriteRecipes = useMemo(() => filtered.filter(r => favSet.has(r.id)).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()), [filtered, favSet])
 
   function handleRandom() {
     const pool = filtered.length > 0 ? filtered : recipes
@@ -128,21 +132,31 @@ export default function RecipeBrowser({ recipes, currentUserId, currentUserName 
       </div>
 
       <div className="flex gap-1 mb-6 bg-white/60 dark:bg-slate-800/60 rounded-full p-1 border-2 border-blue-200 dark:border-slate-700">
-        {(['category', 'all', 'recent', 'people'] as View[]).map(v => (
+        {(['category', 'all', 'recent', 'people', 'favorites'] as View[]).map(v => (
           <button
             key={v}
             onClick={() => setView(v)}
             className={
-              'flex-1 py-2 rounded-full text-sm font-medium transition-colors ' +
+              'flex-1 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors ' +
               (view === v ? 'bg-blue-600 text-white' : 'text-stone-600 dark:text-stone-300 active:bg-blue-50 dark:active:bg-slate-700')
             }
           >
-            {v === 'category' ? 'Category' : v === 'all' ? 'A–Z' : v === 'recent' ? 'Recent' : 'People'}
+            {v === 'category' ? 'Category' : v === 'all' ? 'A–Z' : v === 'recent' ? 'Recent' : v === 'people' ? 'People' : 'Faves'}
           </button>
         ))}
       </div>
 
-      {view === 'people' ? (
+      {view === 'favorites' ? (
+        favoriteRecipes.length === 0 ? (
+          <p className="text-stone-400 dark:text-stone-500 text-sm text-center py-12">
+            No favorites yet. Tap the star at the top of any recipe to add it here.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {favoriteRecipes.map(r => (<RecipeCard key={r.id} recipe={r} isFavorited showTimestamp />))}
+          </div>
+        )
+      ) : view === 'people' ? (
         <>
           <select
             value={selectedPerson}
@@ -150,9 +164,7 @@ export default function RecipeBrowser({ recipes, currentUserId, currentUserName 
             className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border-2 border-blue-200 dark:border-slate-700 rounded-full mb-4 text-sm font-medium"
           >
             {people.length === 0 && <option value="">No people yet</option>}
-            {people.map(p => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
+            {people.map(p => (<option key={p.id} value={p.id}>{p.name}</option>))}
           </select>
           {personRecipes.length === 0 ? (
             <p className="text-stone-400 dark:text-stone-500 text-sm text-center py-12">
@@ -160,9 +172,7 @@ export default function RecipeBrowser({ recipes, currentUserId, currentUserName 
             </p>
           ) : (
             <div className="space-y-2">
-              {personRecipes.map(recipe => (
-                <RecipeCard key={recipe.id} recipe={recipe} showAuthor={false} showTimestamp />
-              ))}
+              {personRecipes.map(r => (<RecipeCard key={r.id} recipe={r} showAuthor={false} showTimestamp isFavorited={favSet.has(r.id)} />))}
             </div>
           )}
         </>
@@ -171,7 +181,7 @@ export default function RecipeBrowser({ recipes, currentUserId, currentUserName 
           <p className="text-stone-400 dark:text-stone-500 text-sm text-center py-12">No recipes found</p>
         ) : (
           <div className="space-y-2">
-            {filtered.map(recipe => (<RecipeCard key={recipe.id} recipe={recipe} showTimestamp />))}
+            {filtered.map(r => (<RecipeCard key={r.id} recipe={r} showTimestamp isFavorited={favSet.has(r.id)} />))}
           </div>
         )
       ) : view === 'all' ? (
@@ -179,7 +189,7 @@ export default function RecipeBrowser({ recipes, currentUserId, currentUserName 
           <p className="text-stone-400 dark:text-stone-500 text-sm text-center py-12">No recipes found</p>
         ) : (
           <div className="space-y-2">
-            {alphabetical.map(recipe => (<RecipeCard key={recipe.id} recipe={recipe} />))}
+            {alphabetical.map(r => (<RecipeCard key={r.id} recipe={r} isFavorited={favSet.has(r.id)} />))}
           </div>
         )
       ) : (
@@ -196,7 +206,7 @@ export default function RecipeBrowser({ recipes, currentUserId, currentUserName 
                   <p className="text-stone-400 dark:text-stone-500 text-sm px-1 py-2">No recipes yet</p>
                 ) : (
                   <div className="space-y-2">
-                    {catRecipes.map(recipe => (<RecipeCard key={recipe.id} recipe={recipe} />))}
+                    {catRecipes.map(r => (<RecipeCard key={r.id} recipe={r} isFavorited={favSet.has(r.id)} />))}
                   </div>
                 )}
               </section>

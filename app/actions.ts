@@ -117,3 +117,36 @@ export async function updateRecipe(id: string, formData: FormData) {
   revalidatePath('/recipe/' + id)
   redirect('/recipe/' + id)
 }
+
+
+export async function addFavorite(recipeId: string): Promise<void> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not signed in')
+
+  const { error } = await supabase
+    .from('favorites')
+    .insert({ user_id: user.id, recipe_id: recipeId })
+
+  if (error && error.code !== '23505') throw new Error(error.message)
+
+  revalidatePath('/')
+  revalidatePath('/recipe/' + recipeId)
+}
+
+export async function removeFavorite(recipeId: string): Promise<void> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not signed in')
+
+  const { error } = await supabase
+    .from('favorites')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('recipe_id', recipeId)
+
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/')
+  revalidatePath('/recipe/' + recipeId)
+}

@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react'
 
-type Scheme = 'blue' | 'terracotta' | 'spotify'
+type Scheme = 'blue' | 'terracotta' | 'spotify' | 'boring'
 
 const SCHEMES: { id: Scheme; name: string; description: string; swatch: string[] }[] = [
   { id: 'blue', name: 'Ocean', description: 'Cool blue on cream', swatch: ['#eff6ff', '#2563eb', '#ffffff'] },
   { id: 'terracotta', name: 'Warm Cream', description: 'Terracotta on cream', swatch: ['#fef7f0', '#c2410c', '#fed7aa'] },
   { id: 'spotify', name: 'Deep', description: 'Green on charcoal', swatch: ['#121212', '#1db954', '#282828'] },
+  { id: 'boring', name: 'Boring', description: 'Plain black and white', swatch: ['#fafafa', '#171717', '#e5e5e5'] },
 ]
 
 export default function ThemeSchemeSelector() {

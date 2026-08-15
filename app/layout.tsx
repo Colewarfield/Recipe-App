@@ -15,17 +15,14 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#2563eb' },
-    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
-  ],
+  themeColor: '#2563eb',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
 }
 
-const themeInitScript = "(function(){try{var m=localStorage.getItem('theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var dark=m==='dark'||(m===null&&d);if(dark)document.documentElement.classList.add('dark');var sc=localStorage.getItem('theme-scheme')||'blue';document.documentElement.setAttribute('data-theme',sc);}catch(e){}})();"
+const themeInitScript = "(function(){try{var m=localStorage.getItem('theme')||'light';if(m==='dark')document.documentElement.classList.add('dark');var sc=localStorage.getItem('theme-scheme')||'blue';document.documentElement.setAttribute('data-theme',sc);}catch(e){}})();"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -22,16 +22,15 @@ export default async function HomePage() {
     )
   }
 
-  const { data: myProfile } = await supabase
-    .from('profiles')
-    .select('display_name')
-    .eq('id', user.id)
-    .single()
+  const [profileRes, recipesRes, favsRes] = await Promise.all([
+    supabase.from('profiles').select('display_name').eq('id', user.id).single(),
+    supabase.from('recipes').select('id, title, category, created_at, owner_id, profiles(display_name)').order('created_at', { ascending: false }),
+    supabase.from('favorites').select('recipe_id').eq('user_id', user.id),
+  ])
 
-  const { data: recipes } = await supabase
-    .from('recipes')
-    .select('id, title, category, created_at, owner_id, profiles(display_name)')
-    .order('created_at', { ascending: false })
+  const myProfile = profileRes.data
+  const recipes = recipesRes.data
+  const favoriteIds = (favsRes.data || []).map(f => f.recipe_id)
 
   return (
     <div className="min-h-screen p-4 pb-16">
@@ -69,6 +68,7 @@ export default async function HomePage() {
           recipes={(recipes as any) ?? []}
           currentUserId={user.id}
           currentUserName={myProfile?.display_name || 'Me'}
+          favoriteIds={favoriteIds}
         />
       </div>
     </div>
