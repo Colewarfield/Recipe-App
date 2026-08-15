@@ -137,15 +137,37 @@ export async function scanRecipeFromUrl(url: string): Promise<ScannedRecipe> {
     const res = await fetch(url, {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; RecipeApp/1.0)',
-        'Accept': 'text/html,application/xhtml+xml',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Cache-Control': 'no-cache',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1',
       },
     })
-    if (!res.ok) throw new Error('Page returned status ' + res.status)
+    if (res.status === 403 || res.status === 401) {
+      throw new Error('That site blocked us (' + res.status + '). It has bot protection. Try a different recipe URL, or copy the recipe text and use Add Recipe instead.')
+    }
+    if (res.status === 404) {
+      throw new Error('Page not found (404). Double-check the URL.')
+    }
+    if (!res.ok) {
+      throw new Error('Page returned ' + res.status + '. Try a different URL.')
+    }
     html = await res.text()
   } catch (e) {
+    if (e instanceof Error && e.name === 'AbortError') {
+      throw new Error('The page took too long to load. Try a different URL.')
+    }
+    if (e instanceof Error && (e.message.includes('blocked us') || e.message.includes('not found') || e.message.includes('returned'))) {
+      throw e
+    }
     const msg = e instanceof Error ? e.message : String(e)
-    throw new Error('Could not fetch page: ' + msg)
+    throw new Error('Could not reach that URL: ' + msg)
   } finally {
     clearTimeout(timeout)
   }
@@ -236,3 +258,4 @@ Webpage text:
     throw new Error('Could not parse recipe from that page. Try a different URL.')
   }
 }
+
