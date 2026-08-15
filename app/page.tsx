@@ -30,7 +30,7 @@ export default async function HomePage() {
 
   const { data: recipes } = await supabase
     .from('recipes')
-    .select('id, title, category, created_at, profiles(display_name)')
+    .select('id, title, category, created_at, owner_id, profiles(display_name)')
     .order('created_at', { ascending: false })
 
   return (
@@ -65,7 +65,11 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <RecipeBrowser recipes={(recipes as any) ?? []} />
+        <RecipeBrowser
+          recipes={(recipes as any) ?? []}
+          currentUserId={user.id}
+          currentUserName={myProfile?.display_name || 'Me'}
+        />
       </div>
     </div>
   )

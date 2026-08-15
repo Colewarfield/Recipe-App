@@ -19,9 +19,10 @@ export default function HelpPage() {
           <h2 className="text-xl font-semibold mb-2">Browsing recipes</h2>
           <p className="text-gray-800 dark:text-stone-200">The home page shows every recipe you can see. Three ways to browse:</p>
           <ul className="list-disc pl-5 mt-2 space-y-1 text-gray-800 dark:text-stone-200">
-            <li><b>By Category</b>: recipes grouped by Breakfast, Lunch, Dinner, Dessert, Snacks, Drinks.</li>
-            <li><b>All A-Z</b>: flat list sorted alphabetically by title.</li>
+            <li><b>Category</b>: recipes grouped by Breakfast, Lunch, Dinner, Dessert, Snacks, Drinks.</li>
+            <li><b>A–Z</b>: flat list sorted alphabetically by title.</li>
             <li><b>Recent</b>: newest first, with labels like &quot;Today&quot;, &quot;2 days ago&quot;.</li>
+            <li><b>People</b>: pick anyone (including yourself) from the dropdown to see just their recipes.</li>
           </ul>
           <p className="mt-2 text-gray-800 dark:text-stone-200">The <b>search bar</b> filters by recipe name in any view. The <b>🎲 dice button</b> picks a random recipe (respects your search filter if one is active).</p>
         </section>
@@ -128,11 +129,12 @@ export default function HelpPage() {
           <p className="text-gray-800 dark:text-stone-200">Tap <b>Profile</b> at the top of the home page, then tap <b>Sign out</b> at the bottom of the Profile page.</p>
         </section>
 
-        <p className="text-xs text-gray-400 dark:text-stone-500 mt-12">Last updated after moving Sign out to Profile and fixing dark mode text.</p>
+        <p className="text-xs text-gray-400 dark:text-stone-500 mt-12">Last updated after adding the People tab.</p>
       </div>
     </div>
   )
 }
+
 
 
 
