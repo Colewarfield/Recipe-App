@@ -59,9 +59,17 @@ export default function CookingMode({ recipe }: { recipe: Recipe }) {
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-2xl mx-auto">
-        <div className="mb-6 flex justify-between items-center">
-          <Link href={'/recipe/' + recipe.id} className="text-sm text-stone-600 dark:text-stone-300 underline">Exit cooking mode</Link>
-          {wakeActive && (<span className="text-xs text-stone-500 dark:text-stone-400">Screen stays awake</span>)}
+        <div className="sticky top-0 z-10 -mx-4 -mt-4 mb-6 px-4 py-3 bg-blue-50/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-blue-100 dark:border-slate-700 flex justify-between items-center">
+          <Link
+            href={'/recipe/' + recipe.id}
+            className="inline-flex items-center gap-1 text-base font-medium text-stone-700 dark:text-stone-200 py-1 pr-2 -ml-1 active:opacity-60"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+            Exit cooking
+          </Link>
+          {wakeActive && (<span className="text-xs text-stone-500 dark:text-stone-400">Screen awake</span>)}
         </div>
 
         <h1 className="text-4xl font-bold mb-6">{recipe.title}</h1>
@@ -121,3 +129,4 @@ export default function CookingMode({ recipe }: { recipe: Recipe }) {
     </div>
   )
 }
+

@@ -35,7 +35,7 @@ export default function LoginPage() {
         <button
           onClick={handleGoogleSignIn}
           disabled={loading}
-          className="w-full px-4 py-3.5 bg-white border border-blue-200 rounded-2xl font-medium flex items-center justify-center gap-3 active:bg-blue-50 disabled:opacity-50 transition-colors"
+          className="w-full px-4 py-3.5 bg-white border-2 border-blue-300 rounded-2xl font-medium flex items-center justify-center gap-3 active:bg-blue-50 disabled:opacity-50 transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path fill="#4285F4" d="M19.6 10.23c0-.68-.06-1.36-.19-2.03H10v3.85h5.4c-.23 1.26-.94 2.33-2 3.05v2.53h3.24c1.9-1.75 2.96-4.34 2.96-7.4z" />
@@ -51,4 +51,5 @@ export default function LoginPage() {
     </div>
   )
 }
+
 

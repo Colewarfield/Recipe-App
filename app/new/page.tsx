@@ -2,6 +2,7 @@
 import { redirect } from 'next/navigation'
 import { createRecipe } from '../actions'
 import Link from 'next/link'
+import BackButton from '@/components/BackButton'
 
 const CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snacks', 'Drinks']
 
@@ -13,9 +14,7 @@ export default async function NewRecipePage() {
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-xl mx-auto">
-        <div className="mb-4">
-          <Link href="/" className="text-sm text-gray-600 underline">Back</Link>
-        </div>
+        <BackButton href="/" />
         <h1 className="text-2xl font-bold mb-4">New Recipe</h1>
 
         <form action={createRecipe} className="space-y-4">
@@ -57,6 +56,7 @@ export default async function NewRecipePage() {
     </div>
   )
 }
+
 
 
 

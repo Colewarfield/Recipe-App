@@ -1,6 +1,7 @@
 ﻿import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import BackButton from '@/components/BackButton'
 import DeleteRecipeButton from '@/components/DeleteRecipeButton'
 import ExportGroceryButton from '@/components/ExportGroceryButton'
 
@@ -43,7 +44,7 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
   return (
     <div className="min-h-screen p-4 pb-16">
       <div className="max-w-xl mx-auto">
-        <Link href="/" className="inline-block mb-4 text-sm text-stone-600 dark:text-stone-300">← Back</Link>
+        <BackButton href="/" />
 
         <h1 className="text-3xl font-bold tracking-tight mb-3">{recipe.title}</h1>
         <div className="flex items-center gap-2 mb-6 flex-wrap">
@@ -62,7 +63,7 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
           Start cooking
         </Link>
 
-        <section className="mb-4 bg-white dark:bg-slate-800 rounded-2xl p-5 border border-blue-100 dark:border-slate-700">
+        <section className="mb-4 bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 border-blue-200 dark:border-slate-700">
           <div className="flex justify-between items-baseline mb-3 gap-2">
             <h2 className="text-lg font-semibold">Ingredients</h2>
             <ExportGroceryButton ingredients={recipe.ingredients || []} recipeTitle={recipe.title} />
@@ -77,7 +78,7 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
           ))}
         </section>
 
-        <section className="mb-4 bg-white dark:bg-slate-800 rounded-2xl p-5 border border-blue-100 dark:border-slate-700">
+        <section className="mb-4 bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 border-blue-200 dark:border-slate-700">
           <h2 className="text-lg font-semibold mb-3">Steps</h2>
           <ol className="list-decimal pl-5 space-y-2 text-stone-800 dark:text-stone-200 leading-relaxed marker:text-blue-500 marker:font-semibold">
             {recipe.steps.map((step: string, i: number) => (<li key={i}>{step}</li>))}
@@ -85,7 +86,7 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
         </section>
 
         {recipe.notes && (
-          <section className="mb-4 bg-white dark:bg-slate-800 rounded-2xl p-5 border border-blue-100 dark:border-slate-700">
+          <section className="mb-4 bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 border-blue-200 dark:border-slate-700">
             <h2 className="text-lg font-semibold mb-3">Notes</h2>
             <p className="whitespace-pre-wrap text-stone-800 dark:text-stone-200 leading-relaxed">{recipe.notes}</p>
           </section>
@@ -103,3 +104,5 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
     </div>
   )
 }
+
+

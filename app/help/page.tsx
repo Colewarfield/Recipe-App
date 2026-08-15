@@ -1,12 +1,11 @@
 ﻿import Link from 'next/link'
+import BackButton from '@/components/BackButton'
 
 export default function HelpPage() {
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-2xl mx-auto">
-        <div className="mb-4">
-          <Link href="/" className="text-sm text-gray-600 underline">Back</Link>
-        </div>
+        <BackButton href="/" />
 
         <h1 className="text-3xl font-bold mb-2">Help &amp; How-To</h1>
         <p className="text-gray-500 text-sm mb-8">Everything you can do in the Recipe App.</p>
@@ -124,6 +123,7 @@ export default function HelpPage() {
     </div>
   )
 }
+
 
 
 

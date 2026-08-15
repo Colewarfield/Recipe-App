@@ -1,6 +1,7 @@
 ﻿import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
+import BackButton from '@/components/BackButton'
 import { updateRecipe } from '@/app/actions'
 
 const CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snacks', 'Drinks']
@@ -25,9 +26,7 @@ export default async function EditRecipePage({ params }: { params: Promise<{ id:
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-xl mx-auto">
-        <div className="mb-4">
-          <Link href={'/recipe/' + id} className="text-sm text-gray-600 underline">Cancel</Link>
-        </div>
+        <BackButton href={"/recipe/" + id} label="Cancel" />
         <h1 className="text-2xl font-bold mb-4">Edit Recipe</h1>
 
         <form action={updateWithId} className="space-y-4">
@@ -105,6 +104,7 @@ export default async function EditRecipePage({ params }: { params: Promise<{ id:
     </div>
   )
 }
+
 
 
 

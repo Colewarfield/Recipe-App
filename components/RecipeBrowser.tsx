@@ -32,7 +32,7 @@ function RecipeCard({ recipe, showTimestamp = false }: { recipe: Recipe; showTim
   return (
     <Link
       href={'/recipe/' + recipe.id}
-      className="block bg-white dark:bg-slate-800 rounded-2xl px-4 py-3.5 border border-blue-100 dark:border-slate-700 active:bg-blue-50/70 dark:active:bg-slate-700 transition-colors"
+      className="block bg-white dark:bg-slate-800 rounded-2xl px-4 py-3.5 border-2 border-blue-200 dark:border-slate-700 active:bg-blue-50/70 dark:active:bg-slate-700 transition-colors"
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex-1 min-w-0">
@@ -85,21 +85,21 @@ export default function RecipeBrowser({ recipes }: { recipes: Recipe[] }) {
             placeholder="Search recipes"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-full text-sm focus:outline-none focus:border-blue-400"
+            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-800 border-2 border-blue-200 dark:border-slate-700 rounded-full text-sm focus:outline-none focus:border-blue-400"
           />
         </div>
         <button
           type="button"
           onClick={handleRandom}
           disabled={recipes.length === 0}
-          className="w-11 h-11 flex items-center justify-center bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-full text-lg active:bg-blue-100 dark:active:bg-slate-700 disabled:opacity-40"
+          className="w-11 h-11 flex items-center justify-center bg-white dark:bg-slate-800 border-2 border-blue-200 dark:border-slate-700 rounded-full text-lg active:bg-blue-100 dark:active:bg-slate-700 disabled:opacity-40"
           title="Random recipe"
         >
           🎲
         </button>
       </div>
 
-      <div className="flex gap-1 mb-6 bg-white/60 dark:bg-slate-800/60 rounded-full p-1 border border-blue-100 dark:border-slate-700">
+      <div className="flex gap-1 mb-6 bg-white/60 dark:bg-slate-800/60 rounded-full p-1 border-2 border-blue-200 dark:border-slate-700">
         {(['category', 'all', 'recent'] as View[]).map(v => (
           <button
             key={v}
@@ -155,3 +155,4 @@ export default function RecipeBrowser({ recipes }: { recipes: Recipe[] }) {
     </div>
   )
 }
+

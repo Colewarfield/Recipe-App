@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import BackButton from '@/components/BackButton'
 import { scanRecipe, type ScannedRecipe } from './actions'
 import { createRecipe } from '../actions'
 
@@ -78,9 +79,7 @@ export default function ScanPage() {
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-xl mx-auto">
-        <div className="mb-4">
-          <Link href="/" className="text-sm text-gray-600 underline">Back</Link>
-        </div>
+        <BackButton href="/" />
         <h1 className="text-2xl font-bold mb-4">Scan Recipe</h1>
 
         {!scanned ? (
@@ -228,6 +227,7 @@ export default function ScanPage() {
     </div>
   )
 }
+
 
 
 
