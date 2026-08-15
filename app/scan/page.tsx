@@ -1,9 +1,8 @@
 ﻿'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import BackButton from '@/components/BackButton'
-import { scanRecipe, type ScannedRecipe } from './actions'
+import { scanRecipe, scanRecipeFromUrl, type ScannedRecipe } from './actions'
 import { createRecipe } from '../actions'
 
 const CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snacks', 'Drinks']
@@ -32,7 +31,8 @@ async function compressImage(file: File, maxWidth = 1400, quality = 0.82): Promi
 
 export default function ScanPage() {
   const [images, setImages] = useState<File[]>([])
-  const [scanning, setScanning] = useState(false)
+  const [url, setUrl] = useState('')
+  const [busy, setBusy] = useState<'idle' | 'photos' | 'url'>('idle')
   const [error, setError] = useState('')
   const [scanned, setScanned] = useState(false)
 
@@ -42,32 +42,50 @@ export default function ScanPage() {
   const [steps, setSteps] = useState('')
   const [notes, setNotes] = useState('')
 
-  async function handleScan() {
+  function applyResult(result: ScannedRecipe) {
+    setTitle(result.title)
+    setCategory(result.category)
+    setIngredients(result.ingredients.join('\n'))
+    setSteps(result.steps.join('\n'))
+    setNotes(result.notes)
+    setScanned(true)
+  }
+
+  async function handleImageScan() {
     if (images.length === 0) return
-    setScanning(true)
+    setBusy('photos')
     setError('')
     try {
       const compressed = await Promise.all(images.map(f => compressImage(f)))
       const formData = new FormData()
       compressed.forEach((img, i) => formData.append('image' + i, img))
-      const result: ScannedRecipe = await scanRecipe(formData)
-      setTitle(result.title)
-      setCategory(result.category)
-      setIngredients(result.ingredients.join('\n'))
-      setSteps(result.steps.join('\n'))
-      setNotes(result.notes)
-      setScanned(true)
+      const result = await scanRecipe(formData)
+      applyResult(result)
     } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Failed to scan'
-      setError(msg)
+      setError(e instanceof Error ? e.message : 'Failed to scan')
     } finally {
-      setScanning(false)
+      setBusy('idle')
+    }
+  }
+
+  async function handleUrlScan() {
+    if (!url.trim()) return
+    setBusy('url')
+    setError('')
+    try {
+      const result = await scanRecipeFromUrl(url.trim())
+      applyResult(result)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to import')
+    } finally {
+      setBusy('idle')
     }
   }
 
   function resetScan() {
     setScanned(false)
     setImages([])
+    setUrl('')
     setTitle('')
     setCategory('Dinner')
     setIngredients('')
@@ -77,63 +95,95 @@ export default function ScanPage() {
   }
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-4 pb-16">
       <div className="max-w-xl mx-auto">
         <BackButton href="/" />
         <h1 className="text-2xl font-bold mb-4">Scan Recipe</h1>
 
         {!scanned ? (
-          <div className="space-y-4">
-            <p className="text-sm text-gray-600">
-              Upload one or more images of the same recipe (screenshots, cookbook photos, etc.).
-              Multiple images get combined.
-            </p>
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 border-blue-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-2">From photos</h2>
+              <p className="text-sm text-stone-600 dark:text-stone-400 mb-3">
+                Upload one or more images (screenshots, cookbook photos, etc.). Multiple images from the same recipe get combined.
+              </p>
 
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={(e) => setImages(Array.from(e.target.files || []))}
-              className="block w-full text-sm border rounded-lg p-2"
-            />
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => setImages(Array.from(e.target.files || []))}
+                className="block w-full text-sm border-2 border-blue-100 dark:border-slate-700 rounded-lg p-2 mb-3"
+              />
 
-            {images.length > 0 && (
-              <>
-                <div className="text-sm text-gray-600">
-                  {images.length} image{images.length === 1 ? '' : 's'} selected
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {images.map((img, i) => (
-                    <div key={i} className="aspect-square border rounded overflow-hidden bg-gray-50">
-                      <img
-                        src={URL.createObjectURL(img)}
-                        alt={'Preview ' + (i + 1)}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
+              {images.length > 0 && (
+                <>
+                  <div className="text-sm text-stone-600 dark:text-stone-400 mb-2">
+                    {images.length} image{images.length === 1 ? '' : 's'} selected
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 mb-3">
+                    {images.map((img, i) => (
+                      <div key={i} className="aspect-square border rounded-lg overflow-hidden bg-gray-50 dark:bg-slate-700">
+                        <img
+                          src={URL.createObjectURL(img)}
+                          alt={'Preview ' + (i + 1)}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
 
-            <button
-              type="button"
-              onClick={handleScan}
-              disabled={scanning || images.length === 0}
-              className="w-full px-4 py-3 bg-blue-500 text-white rounded-lg disabled:opacity-50"
-            >
-              {scanning ? 'Extracting (10-20s)...' : 'Extract Recipe with AI'}
-            </button>
+              <button
+                type="button"
+                onClick={handleImageScan}
+                disabled={busy !== 'idle' || images.length === 0}
+                className="w-full px-4 py-3 bg-blue-600 text-white rounded-2xl font-medium disabled:opacity-50"
+              >
+                {busy === 'photos' ? 'Extracting (10-20s)...' : 'Extract from Photos'}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-blue-200 dark:bg-slate-700" />
+              <span className="text-xs text-stone-500 dark:text-stone-400 font-semibold">OR</span>
+              <div className="flex-1 h-px bg-blue-200 dark:bg-slate-700" />
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 border-blue-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-2">From URL</h2>
+              <p className="text-sm text-stone-600 dark:text-stone-400 mb-3">
+                Paste any recipe URL (blog post, cooking site, etc.) and we&apos;ll scrape the page.
+              </p>
+
+              <input
+                type="url"
+                placeholder="https://example.com/recipe"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                className="w-full px-4 py-2.5 border-2 border-blue-100 dark:border-slate-700 rounded-xl text-sm mb-3"
+              />
+
+              <button
+                type="button"
+                onClick={handleUrlScan}
+                disabled={busy !== 'idle' || !url.trim()}
+                className="w-full px-4 py-3 bg-blue-600 text-white rounded-2xl font-medium disabled:opacity-50"
+              >
+                {busy === 'url' ? 'Fetching &amp; extracting...' : 'Import from URL'}
+              </button>
+            </div>
 
             {error && (
-              <div className="text-red-600 text-sm p-3 bg-red-50 border border-red-200 rounded">
+              <div className="text-red-600 dark:text-red-400 text-sm p-3 bg-red-50 dark:bg-red-950/30 border-2 border-red-200 dark:border-red-900 rounded-2xl">
                 {error}
               </div>
             )}
           </div>
         ) : (
           <>
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4 text-sm text-green-800">
+            <div className="bg-green-50 dark:bg-green-950/30 border-2 border-green-200 dark:border-green-900 rounded-2xl p-3 mb-4 text-sm text-green-800 dark:text-green-300">
               Recipe extracted. Review and edit below, then save.
             </div>
 
@@ -209,16 +259,16 @@ export default function ScanPage() {
                 Make this public
               </label>
 
-              <button type="submit" className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg">
+              <button type="submit" className="w-full px-4 py-3 bg-blue-600 text-white rounded-2xl font-medium">
                 Save Recipe
               </button>
 
               <button
                 type="button"
                 onClick={resetScan}
-                className="w-full py-2 text-gray-600 underline text-sm"
+                className="w-full py-2 text-stone-600 dark:text-stone-300 underline text-sm"
               >
-                Scan different images
+                Scan something else
               </button>
             </form>
           </>
@@ -227,7 +277,3 @@ export default function ScanPage() {
     </div>
   )
 }
-
-
-
-

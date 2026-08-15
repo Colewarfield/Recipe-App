@@ -38,6 +38,11 @@ export default function HelpPage() {
         </section>
 
         <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Importing a recipe from a URL</h2>
+          <p className="text-gray-800 dark:text-stone-200">On the Scan Recipe page, scroll to the <b>From URL</b> section. Paste any recipe link (blog post, cooking site), tap <b>Import from URL</b>. The app fetches the page, uses AI to extract the recipe, and shows the form pre-filled. Works with most recipe websites; some (behind paywalls or heavy bot protection) may not.</p>
+        </section>
+
+        <section className="mb-8">
           <h2 className="text-xl font-semibold mb-2">Scanning a recipe with AI</h2>
           <ol className="list-decimal pl-5 space-y-1 text-gray-800 dark:text-stone-200">
             <li>Tap <b>Scan Recipe</b>.</li>
@@ -134,11 +139,12 @@ export default function HelpPage() {
           <p className="text-gray-800 dark:text-stone-200">Tap <b>Profile</b> at the top of the home page, then tap <b>Sign out</b> at the bottom of the Profile page.</p>
         </section>
 
-        <p className="text-xs text-gray-400 dark:text-stone-500 mt-12">Last updated after adding Favorites and the Boring theme.</p>
+        <p className="text-xs text-gray-400 dark:text-stone-500 mt-12">Last updated after adding URL import to the Scan page.</p>
       </div>
     </div>
   )
 }
+
 
 
 
