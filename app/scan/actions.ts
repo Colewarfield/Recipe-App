@@ -30,9 +30,13 @@ const RULES = `Rules:
 - Guess the category from context (pancakes -> Breakfast, cookies -> Dessert).
 - Each ingredient is one array item WITH its amount (e.g., "2 cups flour").
 - If MULTIPLE distinct ingredient groups exist (e.g., "For the sauce"), preserve as sections: "## Group Name" as its own array item before that group.
+- Same for steps: if the recipe has distinct step groups (e.g., a multi-component meal like meatballs + sauce + assembly), use "## Group Name" as an array item in the steps array before each group.
 - Each step is one array item, in order, concise but complete.
 - Notes: any cook tips, servings, prep time, storage. Empty string if none.
 - If NO recipe found, return { "title": "", "ingredients": [], "steps": [] }.`
+
+// Try these models in order — lite is less congested, flash is backup, latest is the escape hatch
+const MODELS_TO_TRY = ['gemini-3.6-flash-lite', 'gemini-3.6-flash', 'gemini-flash-latest']
 
 async function callGemini(prompt: string, imageParts: { data: string; mimeType: string }[]): Promise<ScannedRecipe> {
   const apiKey = process.env.GEMINI_API_KEY
@@ -52,13 +56,44 @@ async function callGemini(prompt: string, imageParts: { data: string; mimeType: 
     }
   }
 
-  const interaction = await clientAny.interactions.create({
-    model: 'gemini-3.6-flash',
-    input,
-    response_format: [{ type: 'text', mime_type: 'application/json', schema: SCHEMA }],
-  })
+  let lastErr: unknown = null
+  let responseText = ''
 
-  const responseText = interaction.output_text ?? interaction.outputText ?? ''
+  for (const model of MODELS_TO_TRY) {
+    try {
+      const interaction = await clientAny.interactions.create({
+        model,
+        input,
+        response_format: [{ type: 'text', mime_type: 'application/json', schema: SCHEMA }],
+      })
+      responseText = interaction.output_text ?? interaction.outputText ?? ''
+      lastErr = null
+      break
+    } catch (e) {
+      lastErr = e
+      const err = e as { statusCode?: number; status?: number; message?: string }
+      const code = err?.statusCode ?? err?.status
+
+      // 429 (rate limit) is a user-side limit — same for every model. Don't retry.
+      if (code === 429) {
+        throw new Error('Too many scans in the last minute. Wait 30 seconds and try again.')
+      }
+      // 401 / 403 — API key problem. Trying other models won't help.
+      if (code === 401 || code === 403) {
+        throw new Error('AI service rejected the request. The site owner needs to check the API key.')
+      }
+      // 404 (model not available) or 503 (overloaded) — try the next model
+      if (code === 404 || code === 503 || code === 500) {
+        continue
+      }
+      // Anything else — throw immediately
+      throw new Error('AI service failed: ' + (err?.message || 'unknown error'))
+    }
+  }
+
+  if (lastErr) {
+    throw new Error('All AI models are busy right now. Try again in a minute or two.')
+  }
 
   try {
     const parsed = JSON.parse(responseText)
@@ -117,9 +152,7 @@ async function fetchPageText(url: string): Promise<string> {
   const jinaFetch = async (): Promise<string> => {
     const res = await fetch('https://r.jina.ai/' + url, {
       signal: AbortSignal.timeout(30000),
-      headers: {
-        'Accept': 'text/plain',
-      },
+      headers: { 'Accept': 'text/plain' },
     })
     if (!res.ok) throw new Error('jina: HTTP ' + res.status)
     const text = (await res.text()).trim()
@@ -127,7 +160,6 @@ async function fetchPageText(url: string): Promise<string> {
     return text
   }
 
-  // Race both — use whichever succeeds first
   try {
     return await Promise.any([directFetch(), jinaFetch()])
   } catch {
