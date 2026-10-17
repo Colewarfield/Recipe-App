@@ -74,16 +74,13 @@ async function callGemini(prompt: string, imageParts: { data: string; mimeType: 
       const err = e as { statusCode?: number; status?: number; message?: string }
       const code = err?.statusCode ?? err?.status
 
-      // 429 (rate limit) is a user-side limit — same for every model. Don't retry.
-      if (code === 429) {
-        throw new Error('Too many scans in the last minute. Wait 30 seconds and try again.')
-      }
-      // 401 / 403 — API key problem. Trying other models won't help.
+      // Auth errors — same for every model, no point retrying
       if (code === 401 || code === 403) {
         throw new Error('AI service rejected the request. The site owner needs to check the API key.')
       }
-      // 404 (model not available) or 503 (overloaded) — try the next model
-      if (code === 404 || code === 503 || code === 500) {
+      // 429 (rate limit) / 404 (model not available) / 503 (overloaded) / 500 — try the next model
+      // Rate limits are PER model on the free tier, so lite being rate-limited doesn't mean flash is.
+      if (code === 429 || code === 404 || code === 503 || code === 500) {
         continue
       }
       // Anything else — throw immediately
@@ -92,7 +89,7 @@ async function callGemini(prompt: string, imageParts: { data: string; mimeType: 
   }
 
   if (lastErr) {
-    throw new Error('All AI models are busy right now. Try again in a minute or two.')
+    throw new Error('AI service is rate-limited or overloaded on all models. Wait about a minute and try again.')
   }
 
   try {
@@ -239,3 +236,4 @@ Text:
 
   return callGemini(prompt, [])
 }
+
